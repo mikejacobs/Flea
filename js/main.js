@@ -44,7 +44,6 @@ window.onbeforeunload = function(e){
 function draw(){
     if(editor){
 	    scn.clearRect(ch.x1*tileW -2, ch.y1*tileH -2, tileW+2, tileH+2); 
-        // drawCH()
 	}
     // scn.clear = false;
     scn.clearRect(0,0,850,850); // clear canvas
