@@ -75,7 +75,7 @@ $(function(){
           },
         images:
         {
-            clientPath: 'jPicker/images/'
+            clientPath: 'js/jPicker/images/'
         }
     });
     // crosshair

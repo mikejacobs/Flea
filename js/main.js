@@ -36,10 +36,10 @@ init = true;
 tileW = 10;
 tileH = 10;
 // =====================
-window.onbeforeunload = function(e){
+// window.onbeforeunload = function(e){
  // var p = confirm("Leaving ? You will lose all progress.");
  // !confirm("Leaving ? You will lose all progress.") ? e.preventDefault() : window.reload()
-}
+// }
 
 function draw(){
     if(editor){
