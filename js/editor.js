@@ -80,7 +80,12 @@ $(function(){
     });
     // crosshair
     $("#screen").mouseout(function(e){
-        if(ch) ch.display = false;
+        if(ch) {
+            ch.display = false;
+            if(dragging){
+                dragging = false;
+            }
+        }
     })
     $("#screen").mousemove(function(e){
         // console.log(e.pageX, Math.round(e.pageX / 10)*10)
@@ -267,7 +272,8 @@ function makeArea(x1, y1, x2, y2, outline, opts){
     }
 }
 function importMap(map){
-    // console.
+    console.log(typeof map)
+    scn.clearRect(0,0,850,850); // clear canvas
     // if(map[0].length == 85){
         resetGame(map)
     // }
@@ -279,11 +285,14 @@ function exportMap(){
     for (var y = 0; y<mapHeight; ++y) {
         var row = []
         for (var x = 0; x<mapWidth; ++x) {
-
+            
             // row[x] = 0
             if(tiles[y][x]){
                 row[x] = {type: tiles[y][x].type, color: tiles[y][x].color, xtile: tiles[y][x].xtile, ytile: tiles[y][x].ytile}
+            } else {
+                row[x] = 0
             }
+            // console.log(row[y])
         }
         map.tiles.push(row)
 	}

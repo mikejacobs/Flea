@@ -30,12 +30,8 @@
     } ?> -->
 </head>
 <body>
-
-    <div id="progress">
-      Saving...
-    </div> <!-- /div#progress -->
-    <canvas id="background" width="850" height="550" style="background:transparent;position:absolute;top:0px;left:0px;"></canvas>
-    <canvas id="static" width="850" height="550" style="position:absolute;top:0px;background:#fff;left:0px;"></canvas>
+    <canvas id="background" width="850" height="550" style="background:#fff;position:absolute;top:0px;left:0px;"></canvas>
+    <canvas id="static" width="850" height="550" style="position:absolute;top:0px;background:transparent;left:0px;"></canvas>
     <canvas id="screen" width="850" height="550" style="background:transparent;position:absolute;top:0px;left:0px;"></canvas>
     <div class="counter" style="top:560px;left:10px;">    
         <h2>Damage</h2>
@@ -63,13 +59,14 @@
         <h1 id="collection">0</h1>
     </div>
     <div id="materials">
-        <a href="#" class="material" cursor="false" type="person">Person</a><br>
+        <a href="#" class="material" cursor="crosshair" type="person">Person</a><br>
         <a href="#" class="material" cursor="crosshair" type="platform">Platform</a><br>
         <a href="#" class="material" cursor="crosshair" type="sidehold">Side Hold</a><br>
         <a href="#" class="material" cursor="crosshair" type="hazard">Hazard</a><br>
         <a href="#" class="material" cursor="crosshair" type="spring">Spring</a><br>
         <a href="#" class="material" cursor="crosshair" type="star">Star</a><br>
         <a href="#" class="material" cursor="crosshair" type="heart">Heart</a><br>
+        <a href="#" class="material" cursor="crosshair" type="background">Background</a><br>
     </div>
     <div id="colorpicker">
         <!-- <a href="#" id="currentColor">
@@ -151,6 +148,9 @@
         <input type="radio" name="moves" value="false" checked style="margin-left:20px;"> Static<br><br>
         <input type="radio" name="solid" value="true"> Surface
                         <input type="radio" name="solid" value="false" checked style="margin-left:20px;"> Decoration<br><br>
+        <input type="text" value="#000" name="color" class="color"><br>
+        </form>
+        <form id="background" class="tool">
         <input type="text" value="#000" name="color" class="color"><br>
         </form>
 

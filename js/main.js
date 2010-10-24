@@ -60,6 +60,7 @@ function draw(){
 }
 function gameLoad(map){
     console.log("loading map")
+    
     // if(map === String){
         // console.log("string")
     if(map) map = $.evalJSON(map)
@@ -109,7 +110,12 @@ function gameLoad(map){
         // movers.push(row)
 	}
     // console.log(tiles)
-    makePerson({type:"person", id:"person", xtile:1, ytile:2, w:10, h:10, moves:true})
+    // TODO: FIX THIS
+    // if(map.person){
+    //     makePerson(map.person)
+    // }else{
+        makePerson({type:"person", id:"person", xtile:1, ytile:2, w:10, h:10, moves:true})
+    // }
     
 	
     // static_draw();
@@ -125,6 +131,11 @@ function gameLoad(map){
 }
 function resetGame(map){
     clearInterval(drawing)
+    scn.clearRect(0,0,850,850); // clear canvas
+    stc.clearRect(0,0,850,850);
+    bg.clearRect(0,0,850,850);
+    person = 0;
+    movers = [];
     num_stars = 0;
     num_hits = 10;
     max_hits = 15;
@@ -134,6 +145,7 @@ function resetGame(map){
     // leftArrow = false;
     // upArrow = false;
     console.log("loading new map")
+    person = 0;
     gameLoad(map);
 }
 function static_draw(){
