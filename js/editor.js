@@ -11,6 +11,7 @@ ch = false;
 editor = true;
 var stack = [];
 var last_change = 0;
+currentMaterial = 0;
 makeCrosshair = function(x, y){
     crosshairs = new game_obj(tileTypes.crosshair)
     crosshairs.x1 = 0
@@ -80,10 +81,13 @@ $(function(){
     });
     // crosshair
     $("#screen").mouseout(function(e){
-        if(ch) {
+        if(ch && !dragging) {
             ch.display = false;
-            if(dragging){
-                dragging = false;
+            // if(dragging){
+            //     dragging = false;
+            // }
+            for(o in movers){
+                if(o.type=="crosshair") movers[o].remove()
             }
         }
     })
@@ -115,11 +119,13 @@ $(function(){
     // make object
     $("#screen").mousedown(function(e){
         if(ch){
-        dragging = true;
-        startX = Math.round((e.pageX-5) / 10);
-        startY = Math.round((e.pageY-5) / 10);
+            if(currentMaterial != "person"){
+                dragging = true;
+                startX = Math.round((e.pageX-5) / 10);
+                startY = Math.round((e.pageY-5) / 10);
+            }
         }
-    })
+    }).css("cursor", "crosshair")
     $("#screen").mouseup(function(e){
         if(ch){
         opts = getOpts()
@@ -147,37 +153,44 @@ $(function(){
     		    if(inBounds(ch.x1+x, ch.y1+y)){
                     // console.log()
                     if(shiftButton){
-                        
-                        //delete mode
-                        // console.log("delete", ch.x1+x+xo, ch.y1+y+yo, tiles[ch.y1+y+yo][ch.x1+x+xo], movers[ch.y1+y+yo][ch.x1+x+xo])
-                        // tiles[ch.y1+y+yo][ch.x1+x+xo] = 0
-                        if(tiles[ch.y1+y+yo][ch.x1+x+xo]){
-                            // console.log(tiles[ch.y1+y+yo][ch.x1+x+xo].remove)
-                            tiles[ch.y1+y+yo][ch.x1+x+xo].remove()
-                            tiles[ch.y1+y+yo][ch.x1+x+xo] = 0
+                        if(currentMaterial == "background"){
+                            if(bg_tiles[ch.y1+y+yo][ch.x1+x+xo]){
+                                bg_tiles[ch.y1+y+yo][ch.x1+x+xo].remove()
+                            }
+                        }else {
+                            if(tiles[ch.y1+y+yo][ch.x1+x+xo]){
+                                tiles[ch.y1+y+yo][ch.x1+x+xo].remove()
+                            }
                         }
-                        // if(movers[ch.y1+y+yo][ch.x1+x+xo]){
-                        //     movers[ch.y1+y+yo][ch.x1+x+xo].remove()
-                        //     movers[ch.y1+y+yo][ch.x1+x+xo] = 0
-                        // }
+                        
                     }else{
                         var c = $.jPicker.ColorMethods.hexToRgba(opts.color)
+                        // console.log("current material: " + currentMaterial)
                     // console.log('new game_obj({type:"'+currentMaterial+'", xtile:'+(ch.x1+x+xo) +', ytile:'+ (ch.y1+y+yo)+', w:'+tileW+', h:'+tileH+', moves:'+opts.moves+'})')
-                    makeTile({type:currentMaterial, xtile:ch.x1+x+xo, ytile:(ch.y1+y+yo), w:tileW, h:tileH, moves:opts.moves, color: "rgba("+c.r+","+c.g+","+c.b+","+c.a+")"})
-                    // eval('new game_obj({type:"'+currentMaterial+'", xtile:'+ (ch.x1+x+xo) +', ytile:'+ (ch.y1+y+yo)+', w:'+tileW+', h:'+tileH+', moves:'+opts.moves+'})')
+                        if(currentMaterial == "person"){
+                            person.x = (ch.x1*tileW)+tileW/2;
+                            person.y = ((ch.y1+1)*tileH)-person.h;
+                            person.startX = person.x;
+                            person.startY = person.y;
+                            person._color = "rgba("+c.r+","+c.g+","+c.b+","+c.a+")"
+                        }else{
+                            makeTile({type:currentMaterial, xtile:ch.x1+x+xo, ytile:(ch.y1+y+yo), w:tileW, h:tileH, moves:opts.moves, color: "rgba("+c.r+","+c.g+","+c.b+","+c.a+")"})
+                            static_draw()
+                        }
                 }
                 }
             }
         }
     }
     
-    })
+    }).css("cursor", "default")
     $(".material").click(function(){
         //change material
+        // alert("material change"+ $(this).attr("type"))
         $(".material").css({"background": "none", "color": "black"})
         currentMaterial = $(this).attr("type")
         cursor = $(this).attr("cursor")
-        console.log(currentMaterial)
+        // console.log(currentMaterial)
         $(this).css({"background": "#000", "color": "white"})
         $("#opts .tool").hide()
         $("#opts .tool#"+currentMaterial).show()
@@ -209,7 +222,7 @@ $(function(){
         c = $.jPicker.ColorMethods.hexToRgba(opts.color);
         person._color = "rgba("+c.r+","+c.g+","+c.b+","+c.a+")";
         person.color = person._color;
-        console.log(person._color)
+        // console.log(person._color)
         // drawing = setInterval(draw, 40)
         // makePerson({type:"person", id:"person", xtile:opts.xtime, ytile:opts.ytile, w:opts.w, h:opts.h, moves:true})
     })
@@ -218,7 +231,7 @@ $(function(){
         encode = exportMap()
         // console.log("jsonstringify?", encode)
         // console.log("write to win", tmpmap)
-        console.log("encoded", typeof encode)
+        // console.log("encoded", typeof encode)
         $("#savebox_area").attr("value", encode)
         $("#savebox").show()
         // win.write()
@@ -234,6 +247,11 @@ $(function(){
         importMap(generateMap(85, 85))
         drawing = setInterval(draw, 40);
     })
+    $("#printtiles").click(function(){
+        console.log("printing")
+        console.log("tiles", $.toJSON(tiles))
+        console.log("bg_tiles", $.toJSON(bg_tiles))
+    })
     $("#import").click(function(){
         clearInterval(drawing)
         txt = prompt("Map", "");
@@ -247,6 +265,7 @@ $(function(){
             importMap(txt)
         }
     })
+    
 })
 function updateArea(x1, y1, x2, y2, outline, opts){
     var dirx = (x1-x2)/Math.abs(x1-x2) || 0
@@ -261,41 +280,46 @@ function updateArea(x1, y1, x2, y2, outline, opts){
 function makeArea(x1, y1, x2, y2, outline, opts){
     var dirx = (x1-x2)/Math.abs(x1-x2) || 0
     var diry = (y1-y2)/Math.abs(y1-y2) || 0
-    console.log(dirx, diry)
+    // console.log(dirx, diry)
     for(var y = 0; Math.abs(y)< Math.abs(y1-y2); y+=diry){
         for(var x = 0; Math.abs(x)< Math.abs(x1-x2); x+=dirx){
             opts.x = x1 += x
             opts.y = y1 += y
-            console.log("makingarea", opts.x, opts.y)
+            // console.log("makingarea", opts.x, opts.y)
             new game_obj(opts)
         }
     }
 }
 function importMap(map){
-    console.log(typeof map)
+    // console.log(typeof map)
     scn.clearRect(0,0,850,850); // clear canvas
     // if(map[0].length == 85){
         resetGame(map)
     // }
 }
 function exportMap(){
-    var map = {width:mapWidth, height:mapHeight, person:{type:person.type, id:person.id, xtile:person.startX, ytile:person.startY, w:person.w, h:person.h, moves:person.moves}}
+    var map = {width:mapWidth, height:mapHeight, person:{type:person.type, id:person.id, xtile:Math.round(person.startX/tileW), ytile:Math.round(person.startY/tileH), w:person.w, h:person.h, moves:person.moves}}
     // console.log("genmap", w, h)
     map.tiles = []
-    for (var y = 0; y<mapHeight; ++y) {
-        var row = []
-        for (var x = 0; x<mapWidth; ++x) {
-            
-            // row[x] = 0
-            if(tiles[y][x]){
-                row[x] = {type: tiles[y][x].type, color: tiles[y][x].color, xtile: tiles[y][x].xtile, ytile: tiles[y][x].ytile}
-            } else {
-                row[x] = 0
+    map.bg = []
+    fillTiles = function(arr, output){
+        for (var y = 0; y<mapHeight; ++y) {
+            var row = []
+            for (var x = 0; x<mapWidth; ++x) {
+                
+                // row[x] = 0
+                if(arr[y][x]){
+                    row[x] = {type: arr[y][x].type, color: arr[y][x].color, xtile: arr[y][x].xtile, ytile: arr[y][x].ytile}
+                } else {
+                    row[x] = 0
+                }
+                // console.log(row[y])
             }
-            // console.log(row[y])
-        }
-        map.tiles.push(row)
+            output.push(row)
+	    }
 	}
+	fillTiles(tiles, map.tiles)
+	fillTiles(bg_tiles, map.bg)
     // 
     // 
     // tmp = tiles;
@@ -333,6 +357,6 @@ function redo(){
 
 get_v = function(rgb){
     rgb = rgb.split(",")[1].slice(0, -1).split(",")
-    console.log("rgb", rgb)
+    // console.log("rgb", rgb)
     return Math.floor(Math.max(Math.max(rgb.r/255, rgb.b/255), rgb.g/255) * 100);
 }

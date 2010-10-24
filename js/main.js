@@ -19,6 +19,7 @@ var mapWidth = 0;
 var character;
 // var ctx;
 tiles = []
+bg_tiles = []
 statics = []
 movers = []
 person = false;
@@ -70,12 +71,14 @@ function gameLoad(map){
     screenSize = tiles * 10;
     // console.log("map", map)
     if(!map) map = generateMap(tiles, tiles);
+    bg_tiles = map.bg
+    console.log("bg_tiles", bg_tiles)
     // map = myMo;
     tiles = map.tiles;
     // map = generateMap(screenSize);
     mapWidth = map.width;
 	mapHeight = map.height;
-    console.log("loading map width&height", mapWidth, mapHeight)
+    // console.log("loading map width&height", mapWidth, mapHeight)
 	
 	scn = $('#screen').get(0).getContext('2d');
 	stc = $('#static').get(0).getContext('2d');
@@ -87,34 +90,33 @@ function gameLoad(map){
     // if(lvl == "new") editor = true;
     // level(lvl)
 	//update all nonmoving things
-    console.log("tiles", tiles)
-	for (var y = 0; y<map.height; ++y) {
-        var row = []
-		for (var x = 0; x<map.width; ++x) {
-            // console.log("test tile", y, x, tiles[y][x], isNaN(parseInt(tiles[y][x])))
-		    if(tiles[y][x] && isNaN(parseInt(tiles[y][x]))){
-                // console.log("isnan", map[y][x], parseInt(map[y][x]))
-                t = makeTile(tiles[y][x], {xtile:x, ytile:y})
-                // t = new game_obj({type:"platform", xtile:x, ytile:y, moves:false })
-                // t.color = 'rgba(0,0,0,1)';  
-                // t.draw()
-                // tiles[y][x] = t;
-		        if(Math.random()>.2){
-                  // tiles[y][x].solid = false;
-                  // t.color = 'rgba(0,0,0,1)';  
-		        } 
-		        
-            }
-            row[x] = 0;
-		}
-        // movers.push(row)
-	}
+    // console.log("tiles", tiles)
+    fillTiles = function(arr){
+        for (var y = 0; y<map.height; ++y) {
+            var row = []
+    		for (var x = 0; x<map.width; ++x) {
+                // console.log("test tile", y, x, tiles[y][x], isNaN(parseInt(tiles[y][x])))
+    		    if(arr[y][x] && isNaN(parseInt(arr[y][x]))){
+                    // console.log("isnan", map[y][x], parseInt(map[y][x]))
+                    t = makeTile(arr[y][x], {xtile:x, ytile:y})
+    		        if(Math.random()>.2){
+                      // tiles[y][x].solid = false;
+                      // t.color = 'rgba(0,0,0,1)';  
+    		        } 
+
+                }
+                row[x] = 0;
+    		}
+    	}
+    }
+    fillTiles(tiles)
+    fillTiles(bg_tiles)
     // console.log(tiles)
     // TODO: FIX THIS
     // if(map.person){
     //     makePerson(map.person)
     // }else{
-        makePerson({type:"person", id:"person", xtile:1, ytile:2, w:10, h:10, moves:true})
+        makePerson(map.person)
     // }
     
 	
@@ -170,13 +172,18 @@ draw_tiles = function(arr){
 function generateMap(w,h){
     var map = {width:w, height:h}
     console.log("genmap", w, h)
+    map.person = {type:"person", id:"person", xtile:1, ytile:2, w:10, h:10, moves:true}
     map.tiles = []
+    map.bg = []
     for (var y = 0; y<h; ++y) {
         var row = []
+        var rowb = []
 		for (var x = 0; x<w; ++x) {
                 row[x] = 0
+                rowb[x] = 0
         }
-        map.tiles.push(row)
+        map.tiles.push(rowb)
+        map.bg.push(row)
 	}
     // console.log(map)
 	return map;

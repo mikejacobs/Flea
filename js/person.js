@@ -346,7 +346,7 @@ var makePerson = function(args){
             return true;
         }
         person.fall= function() {
-            console.log("falling")
+            // console.log("falling")
             //not while jumping
             if (!this.jumping && !this.hanging) {
                 this.getCorners(this.x, this.y+1);

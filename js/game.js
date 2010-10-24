@@ -8,11 +8,18 @@ var game_obj = function(args){
         movers.push(this)
         // movers[this.ytile][this.xtile] = this;
         this.container = movers;
+        this.context = scn
     } else {
-        tiles[this.ytile][this.xtile] = this;
-        this.container = tiles
+        if(this.type=="background"){
+            bg_tiles[this.ytile][this.xtile] = this;
+            this.container = bg_tiles
+            this.context = bg
+        }else{
+            tiles[this.ytile][this.xtile] = this;
+            this.container = tiles
+            this.context = stc
+        }
     }
-    this.context = (this.moves) ? scn : stc;
     this.draw()
 }
 game_obj.prototype = {
@@ -61,7 +68,7 @@ game_obj.prototype = {
     jump:function() {},
     fall:function() {},
     remove: function() {
-        console.log("removing", this.y, this.x)
+        // console.log("removing", this.y, this.x)
         // arr = (this.moves) ? movers : tiles;
         if(!this.moves)
             this.container[this.ytile][this.xtile] = 0
@@ -71,7 +78,10 @@ game_obj.prototype = {
             }
         }
         if(!this.moves && !init){
-            static_draw()
+            if(this.type == "background")
+                bg_draw()
+            else
+                static_draw()
         }
     }
 
