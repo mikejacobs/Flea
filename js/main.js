@@ -64,20 +64,24 @@ function gameLoad(map){
     
     // if(map === String){
         // console.log("string")
-    if(map) map = $.evalJSON(map)
-    // }
+        tiles = 85
+    
+    if(map) {
+        // map = $.evalJSON(map)
+        tiles = map.width;
+    }
     init = true;
-    tiles = 85
     screenSize = tiles * 10;
     // console.log("map", map)
-    if(!map) map = generateMap(tiles, tiles);
-    bg_tiles = map.bg
+    empty_map = generateMap(tiles, tiles);
+    tiles = empty_map.tiles
+    bg_tiles = empty_map.bg
     console.log("bg_tiles", bg_tiles)
     // map = myMo;
-    tiles = map.tiles;
+    // tiles = map.tiles;
     // map = generateMap(screenSize);
-    mapWidth = map.width;
-	mapHeight = map.height;
+    mapWidth = empty_map.width;
+	mapHeight = empty_map.height;
     // console.log("loading map width&height", mapWidth, mapHeight)
 	
 	scn = $('#screen').get(0).getContext('2d');
@@ -91,32 +95,28 @@ function gameLoad(map){
     // level(lvl)
 	//update all nonmoving things
     // console.log("tiles", tiles)
-    fillTiles = function(arr){
-        for (var y = 0; y<map.height; ++y) {
-            var row = []
-    		for (var x = 0; x<map.width; ++x) {
-                // console.log("test tile", y, x, tiles[y][x], isNaN(parseInt(tiles[y][x])))
-    		    if(arr[y][x] && isNaN(parseInt(arr[y][x]))){
+    
+    //fill the tiles
+    if(map){
+        fillTiles = function(arr, m){
+            for (tile in m) {
                     // console.log("isnan", map[y][x], parseInt(map[y][x]))
-                    t = makeTile(arr[y][x], {xtile:x, ytile:y})
-    		        if(Math.random()>.2){
-                      // tiles[y][x].solid = false;
-                      // t.color = 'rgba(0,0,0,1)';  
-    		        } 
-
-                }
-                row[x] = 0;
-    		}
-    	}
+                    makeTile(m[tile])
+                    // arr[m[tile].ytile][m[tile].xtile] = m[tile]
+                    
+            }
+        }
+        fillTiles(tiles, map.tiles)
+        fillTiles(bg_tiles, map.bg)
+        makePerson(map.person)
+    } else{
+        makePerson(empty_map.person)
     }
-    fillTiles(tiles)
-    fillTiles(bg_tiles)
     // console.log(tiles)
     // TODO: FIX THIS
     // if(map.person){
     //     makePerson(map.person)
     // }else{
-        makePerson(map.person)
     // }
     
 	

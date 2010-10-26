@@ -229,7 +229,7 @@ var makePerson = function(args){
                 //updateDamage(-1)
                 this.y = this.startY;
                 this.x = this.startX;
-                console.log(this.startX)
+                // console.log(this.startX)
                 // console.log("offsecreen")
                 // clearInterval(drawing)
             }else{

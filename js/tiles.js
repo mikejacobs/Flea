@@ -104,10 +104,16 @@ draw:function(){
 // "crosshair": {type:"crosshair", moves:true, solid:false, color:'rgba(255,0,0,1)'}
 }
 makeTile = function(obj){
-    // console.log(obj)
+    // console.log("maketile:", obj)
+    // console.log(typeof obj.type, parseInt(obj.type))
+    // if(parseInt(obj.type) != NaN) obj.type = decode_type[parseInt(obj.type)]
+    // if(typeof obj.type == "number") obj.type = decode_type[obj.type]
     var o = tileTypes[obj.type]
+    console.log(o.type)
     //overwrite with specified vals
     for(arg in obj) o[arg] = obj[arg];
     return new game_obj(o)
 }
+decode_type = ["platform", "crosshair", "hazard", "sidehold", "star", "heart", "background", "spring"]
+encode_type = {"platform":0, "crosshair":1, "hazard":2, "sidehold":3, "star":4, "heart":5, "background":6, "spring":7}
 // console.log("tiletypes loaded", tileTypes)

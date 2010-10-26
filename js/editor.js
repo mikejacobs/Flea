@@ -175,12 +175,12 @@ $(function(){
                             person._color = "rgba("+c.r+","+c.g+","+c.b+","+c.a+")"
                         }else{
                             makeTile({type:currentMaterial, xtile:ch.x1+x+xo, ytile:(ch.y1+y+yo), w:tileW, h:tileH, moves:opts.moves, color: "rgba("+c.r+","+c.g+","+c.b+","+c.a+")"})
-                            static_draw()
                         }
                 }
                 }
             }
         }
+        static_draw()
     }
     
     }).css("cursor", "default")
@@ -290,47 +290,78 @@ function makeArea(x1, y1, x2, y2, outline, opts){
         }
     }
 }
-function importMap(map){
-    // console.log(typeof map)
+function importMap(maparr){
+    // console.log(typeof maparr)
+    // console.log("importing this map", maparr)
+    maparr = $.evalJSON(maparr)
+    // console.log("importing this map's tiles ", maparr["tiles"])
+    decompressTiles = function(arr){
+        // console.log("array to decompress"+arr)
+        output = []
+        for (t in arr) {
+            el = arr[t].split("|")
+            output.push({type: decode_type[parseInt(el[0])], color: el[1], xtile: parseInt(el[2]), ytile: parseInt(el[3])})
+            // console.log("sliced: " + el[0] + "" + el[1] + "" + el[2] + "" + el[3])
+           
+            // if(arr[y][x]) output.push("" + encode_type(arr[y][x].type) + "|" + arr[y][x].color + "|" + arr[y][x].xtile + "|" + arr[y][x].ytile)
+            // output.push(row)
+	    }
+        // console.log("output", output)
+	    return output
+	}
+	maparr.tiles = decompressTiles(maparr.tiles)
+	maparr.bg = decompressTiles(maparr.bg)
+    
+    // console.log("import tiles", maparr.tiles)
     scn.clearRect(0,0,850,850); // clear canvas
-    // if(map[0].length == 85){
-        resetGame(map)
-    // }
+    resetGame(maparr)
 }
 function exportMap(){
-    var map = {width:mapWidth, height:mapHeight, person:{type:person.type, id:person.id, xtile:Math.round(person.startX/tileW), ytile:Math.round(person.startY/tileH), w:person.w, h:person.h, moves:person.moves}}
+    var maparr = {width:mapWidth, height:mapHeight, person:{type:person.type, id:person.id, xtile:Math.round(person.startX/tileW), ytile:Math.round(person.startY/tileH), w:person.w, h:person.h, moves:person.moves}}
     // console.log("genmap", w, h)
-    map.tiles = []
-    map.bg = []
-    fillTiles = function(arr, output){
+    
+    maparr.tiles = []
+    maparr.bg = []
+    //     fillTiles = function(arr, output){
+    //         for (var y = 0; y<mapHeight; ++y) {
+    //             var row = []
+    //             for (var x = 0; x<mapWidth; ++x) {
+    //                 
+    //                 // row[x] = 0
+    //                 if(arr[y][x]){
+    //                     row[x] = {type: arr[y][x].type, color: arr[y][x].color, xtile: arr[y][x].xtile, ytile: arr[y][x].ytile}
+    //                 } // else {
+    //                 //                     row[x] = 0
+    //                 //                 }
+    //                 // console.log(row[y])
+    //             }
+    //             output.push(row)
+    //     }
+    // }
+	compressTiles = function(arr, output){
         for (var y = 0; y<mapHeight; ++y) {
-            var row = []
+            // var row = []
             for (var x = 0; x<mapWidth; ++x) {
                 
                 // row[x] = 0
-                if(arr[y][x]){
-                    row[x] = {type: arr[y][x].type, color: arr[y][x].color, xtile: arr[y][x].xtile, ytile: arr[y][x].ytile}
-                } else {
-                    row[x] = 0
+                // if(arr[y][x]) output.push({type: arr[y][x].type, color: arr[y][x].color, xtile: arr[y][x].xtile, ytile: arr[y][x].ytile})
+                // 0|ffffff|1|34
+                if(arr[y][x] && arr[y][x] != 0) {
+                    // console.log("obj", arr[y][x])
+                    // console.log("type= ", arr[y][x].type)
+                    output.push("" + encode_type[arr[y][x].type] + "|" + arr[y][x].color + "|" + arr[y][x].xtile + "|" + arr[y][x].ytile)
                 }
+                // } // else {
+                //                     row[x] = 0
+                //                 }
                 // console.log(row[y])
             }
-            output.push(row)
+            // output.push(row)
 	    }
 	}
-	fillTiles(tiles, map.tiles)
-	fillTiles(bg_tiles, map.bg)
-    // 
-    // 
-    // tmp = tiles;
-    // var tmp = ObjectHandler.getCloneOfObject(tiles);
-    // for (var y = 0; y<mapHeight; ++y) {
-    //     for (var x = 0; x<mapWidth; ++x) {
-    // 
-    // }
-    // }
-    // var tmpmap= {width: mapWidth, height:mapHeight, tiles:tmp}
-    return $.toJSON(map)
+	compressTiles(tiles, maparr.tiles)
+	compressTiles(bg_tiles, maparr.bg)
+    return $.toJSON(maparr)
 }
 function backup(){
     stack.push(exportMap())
