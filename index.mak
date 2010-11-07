@@ -190,7 +190,20 @@
         <textarea name="savebox_area" id="savebox_area" rows="8" cols="40"></textarea>
     </div>
     <script type="text/javascript" charset="utf-8">
-    gameLoad();
+    // console.log(window.location.href)
+    url = window.location.href.split("#")
+    if(url[1]){
+        $.ajax({
+            url: 'http://mjacobs.me/load',
+            data: {id:url[1]},
+            success: function(data){
+                console.log(data)
+                gameLoad(data)
+            }
+        });
+    } else {
+       gameLoad(); 
+    }
     </script>
 </body>
 </html>

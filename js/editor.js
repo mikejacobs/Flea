@@ -229,16 +229,15 @@ $(function(){
     $("#save").click(function(){
 
         encode = exportMap()
-        // console.log("jsonstringify?", encode)
-        // console.log("write to win", tmpmap)
-        // console.log("encoded", typeof encode)
-        $("#savebox_area").attr("value", encode)
-        $("#savebox").show()
-        // win.write()
-        console.log("import")
-        // importMap(encode)
-        
-        // drawing = setInterval(draw, 40)
+        console.log("sending", encode)
+        $.ajax({
+          type: 'POST',
+          url: 'http://mjacobs.me/savelevel',
+          data: {"level":encode},
+          success: function(data) {
+              console.log("sent", data);
+          }
+        });
     })
     $("#undo").click(undo)
     $("#redo").click(redo)
@@ -322,46 +321,23 @@ function exportMap(){
     
     maparr.tiles = []
     maparr.bg = []
-    //     fillTiles = function(arr, output){
-    //         for (var y = 0; y<mapHeight; ++y) {
-    //             var row = []
-    //             for (var x = 0; x<mapWidth; ++x) {
-    //                 
-    //                 // row[x] = 0
-    //                 if(arr[y][x]){
-    //                     row[x] = {type: arr[y][x].type, color: arr[y][x].color, xtile: arr[y][x].xtile, ytile: arr[y][x].ytile}
-    //                 } // else {
-    //                 //                     row[x] = 0
-    //                 //                 }
-    //                 // console.log(row[y])
-    //             }
-    //             output.push(row)
-    //     }
-    // }
 	compressTiles = function(arr, output){
         for (var y = 0; y<mapHeight; ++y) {
             // var row = []
             for (var x = 0; x<mapWidth; ++x) {
-                
-                // row[x] = 0
-                // if(arr[y][x]) output.push({type: arr[y][x].type, color: arr[y][x].color, xtile: arr[y][x].xtile, ytile: arr[y][x].ytile})
                 // 0|ffffff|1|34
                 if(arr[y][x] && arr[y][x] != 0) {
                     // console.log("obj", arr[y][x])
                     // console.log("type= ", arr[y][x].type)
                     output.push("" + encode_type[arr[y][x].type] + "|" + arr[y][x].color + "|" + arr[y][x].xtile + "|" + arr[y][x].ytile)
                 }
-                // } // else {
-                //                     row[x] = 0
-                //                 }
-                // console.log(row[y])
             }
-            // output.push(row)
 	    }
 	}
 	compressTiles(tiles, maparr.tiles)
 	compressTiles(bg_tiles, maparr.bg)
     return $.toJSON(maparr)
+    // return maparr
 }
 function backup(){
     stack.push(exportMap())

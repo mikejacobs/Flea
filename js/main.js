@@ -60,14 +60,34 @@ function draw(){
     // }
 }
 function gameLoad(map){
-    console.log("loading map")
-    
+    console.log("loading map", map)
+    tiles = 85
+
     // if(map === String){
         // console.log("string")
-        tiles = 85
+
     
     if(map) {
         // map = $.evalJSON(map)
+        if(map[0]["id"]){ /* if loaded through template */
+            console.log("loading map from db")
+            tempmap = generateMap(tiles, tiles);
+            // map = $.evalJSON(map)
+            // console.log("importing this map's tiles ", maparr["tiles"])
+            decompressTiles = function(arr){
+                // console.log("array to decompress"+arr)
+                output = []
+                for (t in arr) {
+                    el = arr[t].split("|")
+                    output.push({type: decode_type[parseInt(el[0])], color: el[1], xtile: parseInt(el[2]), ytile: parseInt(el[3])})
+        	    }
+                // console.log("output", output)
+        	    return output
+        	}
+        	tempmap.tiles = decompressTiles(map[0]["level"]["tiles"])
+        	tempmap.bg = decompressTiles(map[0]["level"]["bg"])
+        	map = tempmap
+        }
         tiles = map.width;
     }
     init = true;
@@ -132,7 +152,10 @@ function gameLoad(map){
     // draw()
 }
 function resetGame(map){
-    clearInterval(drawing)
+    if (drawing) clearInterval(drawing)
+    scn = $('#screen').get(0).getContext('2d');
+	stc = $('#static').get(0).getContext('2d');
+	bg = $('#background').get(0).getContext('2d');
     scn.clearRect(0,0,850,850); // clear canvas
     stc.clearRect(0,0,850,850);
     bg.clearRect(0,0,850,850);
