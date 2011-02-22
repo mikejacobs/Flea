@@ -5,11 +5,18 @@
         .preview{
             width:170px;
             height:110px;
-            border:1px solid #ebebeb;
+            border:1px solid #dedede;
             display:block;
             float:left;
             margin-bottom:20px;
             margin-right:20px;
+        }
+        a{
+            text-align:center;
+            line-height:110px;
+        }
+        a:hover, a .preview:hover{
+            border:1px solid #777;
         }
     </style>
 </head>
@@ -64,5 +71,6 @@
         }
     }
     </script>
+    <a class="preview" href='http://mjacobs.me/flea/'>New Level</a>
 </body>
 </html>
