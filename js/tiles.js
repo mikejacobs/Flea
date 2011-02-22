@@ -3,32 +3,48 @@ tileTypes = {
     "crosshair": {type:"crosshair", moves:true, solid:false, color:'rgba(255,0,0,1)'},
     "hazard": {type:"hazard", moves:false, solid:true, color:'rgba(255,0,0,1)', collideAction: function(other, dir){
         if(other.id == "person"){
-            update_damage(-1);
-            if(other.hanging){
-                other.hanging = false;
+            spikeTranslator = {
+                "right":"left",
+                "top":"down",
+                "bottom":"top",
+                "left":"right"
+            }
+            // console.log("spikes", this.spikes, spikeTranslator[this.spikes])
+            if(dir.indexOf(spikeTranslator[this.spikes])!=-1){
+                update_damage(-1);
+                if(other.hanging){
+                    other.hanging = false;
+                }
             }
         }
     },
     draw:function(){
         if(this.display){
             this.context.fillStyle = this.color;
-            // this.context.fillRect(this.xtile*tileW, this.ytile*tileH, tileW, tileH);
-            // this.context.beginPath();  
-            // this.context.moveTo(this.xtile*tileW, this.ytile*tileW + tileW);
-            // this.context.lineTo(this.xtile*tileW, this.ytile*tileW + (tileW/2));
-            // this.context.lineTo(this.xtile*tileW + 4, this.ytile*tileW);
-            // this.context.lineTo(this.xtile*tileW + 8, this.ytile*tileW  + (tileW/2));
-            // this.context.lineTo(this.xtile*tileW + tileW, this.ytile*tileW  + (tileW/2));
-            // this.context.lineTo(this.xtile*tileW + tileW, this.ytile*tileW  + tileW);
-            // this.context.fill();
-            this.context.beginPath();  
-            this.context.moveTo(this.xtile*tileW, this.ytile*tileW + tileW);
-            this.context.lineTo(this.xtile*tileW, this.ytile*tileW + (tileW/2));
-            this.context.lineTo(this.xtile*tileW + (tileW/2), this.ytile*tileW);
-            // this.context.lineTo(this.xtile*tileW + 8, this.ytile*tileW  + (tileW/2));
-            this.context.lineTo(this.xtile*tileW + tileW, this.ytile*tileW  + (tileW/2));
-            this.context.lineTo(this.xtile*tileW + tileW, this.ytile*tileW  + tileW);
-            this.context.fill();
+            d = (this.spikes)? this.spikes : "top";
+            if(d == "top" || d == "bottom"){
+                d = (d == "top")? 1 : -1;
+                offset=(d==-1)? tileH : 0 ;
+                this.context.beginPath();  
+                this.context.moveTo(this.xtile*tileW, this.ytile*tileW + (tileW*d) + offset);
+                this.context.lineTo(this.xtile*tileW, this.ytile*tileW + ((tileW/2)*d) + offset);
+                this.context.lineTo(this.xtile*tileW + (tileW/2), this.ytile*tileW + offset);
+                // this.context.lineTo(this.xtile*tileW + 8, this.ytile*tileW  + (tileW/2));
+                this.context.lineTo(this.xtile*tileW + tileW, this.ytile*tileW  + ((tileW/2)*d) + offset);
+                this.context.lineTo(this.xtile*tileW + tileW, this.ytile*tileW  + (tileW*d) + offset);
+                this.context.fill();
+            } else if(d == "right" || d == "left"){
+                d = (d == "left")? 1 : -1;
+                offset=(d==-1)? tileW : 0 ;
+                this.context.beginPath();  
+                this.context.moveTo(this.xtile*tileW + (tileW*d) + offset, this.ytile*tileH);
+                this.context.lineTo(this.xtile*tileW + ((tileW/2)*d) + offset, this.ytile*tileH);
+                this.context.lineTo(this.xtile*tileW + offset, this.ytile*tileH + (tileH/2));
+                // this.context.lineTo(this.xtile*tileW + 8, this.ytile*tileW  + (tileW/2));
+                this.context.lineTo(this.xtile*tileH  + ((tileH/2)*d) + offset, this.ytile*tileH + tileH);
+                this.context.lineTo(this.xtile*tileH  + (tileH*d) + offset, this.ytile*tileH + tileH);
+                this.context.fill();
+            }
 
         }
     },
@@ -92,9 +108,7 @@ draw:function(){
         this.context.fillStyle = this.color;            
         this.context.beginPath();  
         this.context.moveTo(this.xtile*tileW, this.ytile*tileW + tileW);
-
         this.context.arc(this.xtile*tileW + (tileW/2), this.ytile*tileW + (tileW/2), 4, Math.PI, 0, false)
-
         this.context.lineTo(this.xtile*tileW + tileW, this.ytile*tileW  + tileW);
         this.context.fill();
 

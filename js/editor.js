@@ -174,7 +174,7 @@ $(function(){
                             person.startY = person.y;
                             person._color = "rgba("+c.r+","+c.g+","+c.b+","+c.a+")"
                         }else{
-                            makeTile({type:currentMaterial, xtile:ch.x1+x+xo, ytile:(ch.y1+y+yo), w:tileW, h:tileH, moves:opts.moves, color: "rgba("+c.r+","+c.g+","+c.b+","+c.a+")"})
+                            makeTile({type:currentMaterial, xtile:ch.x1+x+xo, ytile:(ch.y1+y+yo), w:tileW, h:tileH, moves:opts.moves, color: "rgba("+c.r+","+c.g+","+c.b+","+c.a+")", spikes:$("input[name='spikes']:checked").val()})
                         }
                 }
                 }
