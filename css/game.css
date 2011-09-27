@@ -1,5 +1,10 @@
 *{margin:0px;padding:0px;}
 body{overflow:hidden;background:#ebebeb;}
+#viewer{
+    height:550px;
+    width:850px;
+    overflow:hidden;
+}
 .hit{display:block;float:left;width:5px;height:20px;margin-right:3px;}
 .green{background:#44aa44;}
 .yellow{background:rgb(225,220,20);}

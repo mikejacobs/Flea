@@ -17,6 +17,8 @@ var map = []
 var mapHeight = 0;
 var mapWidth = 0;
 var character;
+var view = {x:850,y:550};
+var allCanvases;
 // var ctx;
 tiles = []
 bg_tiles = []
@@ -47,7 +49,7 @@ function draw(){
 	    scn.clearRect(ch.x1*tileW -2, ch.y1*tileH -2, tileW+2, tileH+2); 
 	}
     // scn.clear = false;
-    scn.clearRect(0,0,850,850); // clear canvas
+    scn.clearRect(0,0,mapWidth,mapHeight); // clear canvas
     // scn.clearRect(person.x, person.y, tileW, tileH); 
     
 
@@ -61,55 +63,54 @@ function draw(){
 }
 function gameLoad(map){
     console.log("loading map", map)
-    tiles = 85
+    tilesX = 305
+    tilesY = 55
+    $("canvas").each(function(){
+        $(this).attr({"width": tilesX*tileW, "height":tilesY*tileH})
+    })
 
-    // if(map === String){
-        // console.log("string")
-
-    
-    if(map) {
-        // map = $.evalJSON(map)
-        if(map[0]["id"]){ /* if loaded through template */
-            console.log("loading map from db")
-            tempmap = generateMap(tiles, tiles);
-            // map = $.evalJSON(map)
-            // console.log("importing this map's tiles ", maparr["tiles"])
-            decompressTiles = function(arr){
-                // console.log("array to decompress"+arr)
-                output = []
-                for (t in arr) {
-                    el = arr[t].split("|")
-                    output.push({type: decode_type[parseInt(el[0])], color: el[1], xtile: parseInt(el[2]), ytile: parseInt(el[3])})
-        	    }
-                // console.log("output", output)
-        	    return output
-        	}
-        	tempmap.tiles = decompressTiles(map[0]["level"]["tiles"])
-        	tempmap.bg = decompressTiles(map[0]["level"]["bg"])
-        	map = tempmap
-        }
-        tiles = map.width;
-    }
+    // if loading a map
+    // if(map) {
+    //     // map = $.evalJSON(map)
+    //     if(map[0]["id"]){ /* if loaded through template */
+    //         console.log("loading map from db")
+    //         tempmap = generateMap(tiles, tiles);
+    //         // map = $.evalJSON(map)
+    //         // console.log("importing this map's tiles ", maparr["tiles"])
+    //         decompressTiles = function(arr){
+    //             // console.log("array to decompress"+arr)
+    //             output = []
+    //             for (t in arr) {
+    //                 el = arr[t].split("|")
+    //                 output.push({type: decode_type[parseInt(el[0])], color: el[1], xtile: parseInt(el[2]), ytile: parseInt(el[3])})
+    //     	    }
+    //             // console.log("output", output)
+    //     	    return output
+    //     	}
+    //     	tempmap.tiles = decompressTiles(map[0]["level"]["tiles"])
+    //     	tempmap.bg = decompressTiles(map[0]["level"]["bg"])
+    //     	map = tempmap
+    //     }
+    //     tiles = map.width;
+    // }
     init = true;
-    screenSize = tiles * 10;
     // console.log("map", map)
-    empty_map = generateMap(tiles, tiles);
+    empty_map = generateMap(tilesX * tileW, tilesY * tileH);
     tiles = empty_map.tiles
     bg_tiles = empty_map.bg
-    console.log("bg_tiles", bg_tiles)
+    // console.log("bg_tiles", bg_tiles)
     // map = myMo;
     // tiles = map.tiles;
-    // map = generateMap(screenSize);
     mapWidth = empty_map.width;
 	mapHeight = empty_map.height;
     // console.log("loading map width&height", mapWidth, mapHeight)
-	
+	allCanvases = $("canvas")
 	scn = $('#screen').get(0).getContext('2d');
 	stc = $('#static').get(0).getContext('2d');
 	bg = $('#background').get(0).getContext('2d');
-	scn.clearRect(0,0,850,850);
-	stc.clearRect(0,0,850,850);
-	bg.clearRect(0,0,850,850);
+	scn.clearRect(0,0,mapWidth,mapHeight);
+	stc.clearRect(0,0,mapWidth,mapHeight);
+	bg.clearRect(0,0,mapWidth,mapHeight);
 
     // if(lvl == "new") editor = true;
     // level(lvl)
@@ -156,9 +157,13 @@ function resetGame(map){
     scn = $('#screen').get(0).getContext('2d');
 	stc = $('#static').get(0).getContext('2d');
 	bg = $('#background').get(0).getContext('2d');
-    scn.clearRect(0,0,850,850); // clear canvas
-    stc.clearRect(0,0,850,850);
-    bg.clearRect(0,0,850,850);
+    scn.clearRect(0,0,mapHWidth,mapHeight); // clear canvas
+    stc.clearRect(0,0,mapWidth,mapHeight);
+    bg.clearRect(0,0,mapWidth,mapHeight);
+    allCanvases.each(function(){
+        $(this).css("left", 0 + "px");
+    })
+    shiftedX = 0;
     person = 0;
     movers = [];
     num_stars = 0;
@@ -175,12 +180,12 @@ function resetGame(map){
 }
 function static_draw(){
     // console.log("redrawing static")
-	stc.clearRect(0,0,850,850);
+	stc.clearRect(0,0,mapWidth,mapHeight);
     draw_tiles(tiles)
 }
 function bg_draw(){
     // console.log("redrawing static")
-	bg.clearRect(0,0,850,850);
+	bg.clearRect(0,0,mapWidth,mapHeight);
     draw_tiles(bg_tiles)
 }
 draw_tiles = function(arr){
@@ -210,4 +215,35 @@ function generateMap(w,h){
 	}
     // console.log(map)
 	return map;
+}
+
+
+function resetView(){
+    shiftedX = 0;
+    allCanvases.each(function(){
+        $(this).css("left", 0 + "px");
+    })
+}
+var shiftedX = 0;
+function shiftView(dir){
+    // console.log(person.x, person.y);
+    if(dir>0 && view.x - (person.x - shiftedX)< view.x*1/3){
+        shiftedX+=2;
+        if(view.x - (person.x - shiftedX)< view.x*1/8){
+            shiftedX+=3;
+        }
+        console.log("right", dir, "shifted", shiftedX, "person.x", person.x, "calculation", view.x - (person.x + shiftedX), "view2/3", view.x*2/3)
+        allCanvases.each(function(){
+            $(this).css("left", -shiftedX + "px");
+        })
+    }else if(dir<0 && person.x - shiftedX < view.x*1/3 && shiftedX > 0){
+        shiftedX-=2;
+        if(person.x - shiftedX < view.x*1/8){
+            shiftedX-=3;
+        }
+        console.log("left", dir, shiftedX, person.x)
+        allCanvases.each(function(){
+            $(this).css("left", -shiftedX + "px");
+        })
+    } 
 }

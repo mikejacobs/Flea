@@ -69,7 +69,7 @@ $(function(){
           {
             position:
             {
-              x: 'screenCenter', // acceptable values "left", "center", "right",
+              x: '150px', // acceptable values "left", "center", "right",
                                  // "screenCenter", or relative px value
               y: '-150px', // acceptable values "top", "bottom", "center", or relative px value
             },
@@ -90,6 +90,7 @@ $(function(){
                 if(o.type=="crosshair") movers[o].remove()
             }
         }
+        ch.display = false;
     })
     $("#screen").mousemove(function(e){
         // console.log(e.pageX, Math.round(e.pageX / 10)*10)
@@ -98,6 +99,7 @@ $(function(){
 
         xtile = Math.round((e.pageX-5) / 10);
         ytile = Math.round((e.pageY-5) / 10);
+        $(this).css("cursor", "crosshair")
 
         if(ch && !dragging){
 
@@ -113,19 +115,21 @@ $(function(){
             // console.log("makearea", dragging, startX, startY, xtile, ytile, true, tileTypes.crosshair)
             ch.update(startX, startY, xtile, ytile, true)
         }
-
+        return false;
         // }
     })
     // make object
     $("#screen").mousedown(function(e){
         if(ch){
+            $(this).css("cursor", "crosshair")
             if(currentMaterial != "person"){
                 dragging = true;
                 startX = Math.round((e.pageX-5) / 10);
                 startY = Math.round((e.pageY-5) / 10);
             }
         }
-    }).css("cursor", "crosshair")
+        return false;
+    })
     $("#screen").mouseup(function(e){
         if(ch){
         opts = getOpts()
@@ -312,7 +316,7 @@ function importMap(maparr){
 	maparr.bg = decompressTiles(maparr.bg)
     
     // console.log("import tiles", maparr.tiles)
-    scn.clearRect(0,0,850,850); // clear canvas
+    scn.clearRect(0,0,mapWidth,mapHeight); // clear canvas
     resetGame(maparr)
 }
 function exportMap(){

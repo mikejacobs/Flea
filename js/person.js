@@ -1,5 +1,5 @@
 //playable character
-// var person = new game_obj({type:"person", id:"person", x:0, y:0, w:10, h:20, moves:true})
+// var person = new game_obj({type:"person", id:"person", x:0, y:0, w:10, h:20, ps:true})
 // var person = function(args){
 //     person.obj = new game_obj(args)
 // }
@@ -26,9 +26,11 @@ function detectKeys() {
         // console.log("cx", person.x)
         moved = true;
         person.move(1, 0, 0);
+        shiftView(1);
     } else if (leftArrow) {
         moved = true;
         person.move(-1, 0, 0);
+        shiftView(-1);
     } if (person.hanging && !upArrow){
         moved = true;
         person.hanging = false;
@@ -195,11 +197,12 @@ var makePerson = function(args){
         if (diry == -1) {
             // console.log("xy", this.x, this.y)
 
-            if(this.y > (screenSize+this.h)){
+            if(this.y > (mapHeight+this.h)){
                 //off map
                 //updateDamage(-1)
                 this.y = this.startY;
                 this.x = this.startX;
+                resetView();
             } else {
                 for(var times = 0; times <= speed; times++ ){
                     this.getCorners (this.x, this.y+(times*diry));
@@ -221,7 +224,7 @@ var makePerson = function(args){
             }
         }
         if (diry == 1) {
-            if(this.y+speed > (screenSize-this.h-tileH)){
+            if(this.y+speed > (mapHeight-this.h-tileH)){
                 // this.speed = 0
                 this.jumping =false
                 this.fall()
@@ -229,6 +232,7 @@ var makePerson = function(args){
                 //updateDamage(-1)
                 this.y = this.startY;
                 this.x = this.startX;
+                resetView();
                 // console.log(this.startX)
                 // console.log("offsecreen")
                 // clearInterval(drawing)

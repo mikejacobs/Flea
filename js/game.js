@@ -48,7 +48,7 @@ game_obj.prototype = {
     upright:false,
     downright:false,
     jumping:false,
-    jumpstart:-13,
+    jumpstart:-15,
     jumpspeed:0,
     gravity:1,
     speed:5,
@@ -91,10 +91,10 @@ var tile = function(args){
 }
 function inBounds(x,y){
     // console.log("check bounds of: ", x, y)
-    if(x>(screenSize/10)-1 || x<0){
+    if(x>(mapWidth/10)-1 || x<0){
         return false;
     }
-    if(y>(screenSize/10)-1 || y<0){
+    if(y>(mapHeight/10)-1 || y<0){
         return false;
     }
     return true;

@@ -23,9 +23,11 @@
     <link rel="stylesheet" href="js/jPicker/css/jPicker-1.0.13.css" type="text/css" media="screen" title="no title" charset="utf-8">
 </head>
 <body>
+    <div id="viewer">
     <canvas id="background" width="850" height="550" style="background:#fff;position:absolute;top:0px;left:0px;"></canvas>
     <canvas id="static" width="850" height="550" style="position:absolute;top:0px;background:transparent;left:0px;"></canvas>
     <canvas id="screen" width="850" height="550" style="background:transparent;position:absolute;top:0px;left:0px;"></canvas>
+    </div>
     <div class="counter" style="top:560px;left:10px;">    
         <h2>Damage</h2>
         <div id="damage">
