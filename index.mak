@@ -194,7 +194,7 @@
     url = window.location.href.split("#")
     if(url[1]){
         $.ajax({
-            url: 'http://mjacobs.me/load',
+            url: 'http://mjacobs.me/a/load',
             data: {id:url[1]},
             success: function(data){
                 console.log(data)

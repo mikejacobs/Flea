@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="http://mjacobs.me/flea/play/js/jquery.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://mjacobs.me/a/flea/play/js/jquery.js" type="text/javascript" charset="utf-8"></script>
     <style type="text/css" media="screen">
         .preview{
             width:170px;
@@ -21,7 +21,13 @@
     </style>
 </head>
 <body>
-        
+    <h2>FLEA</h2>
+    Flea is a platformer built entirely in Javascript, HTML and CSS. The level editor is always accessible during gameplay. So, you can either build your own level and save it, or choose a level by someone else below.<br><Br>
+    How to play:<br>
+    Jump = Space<Br>
+    Movement = Left and Right arrow keys<br>
+    Hang = Hold up arrow when on underside of platform<br><br>
+    <div id="levels"><a class="preview" href='http://mjacobs.me/a/flea/'>New Level</a></div>
     <script type="text/javascript" charset="utf-8">
     $(function(){
         makePreview = function(tiles, bg, id){
@@ -31,7 +37,7 @@
             }
             canvas = makeCanvas()
             ctx = canvas.get(0).getContext('2d')
-            $("<a href='http://mjacobs.me/flea/#"+id+"'></a>").append(canvas).appendTo("body")
+            $("<a href='http://mjacobs.me/a/flea/#"+id+"'></a>").append(canvas).prependTo("#levels")
             tileW = 4
             tileH = 3
             loadPreview = function(arr, ctx){
@@ -71,6 +77,5 @@
         }
     }
     </script>
-    <a class="preview" href='http://mjacobs.me/flea/'>New Level</a>
 </body>
 </html>
