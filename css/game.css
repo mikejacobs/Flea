@@ -2,7 +2,7 @@
 body{overflow:hidden;background:#ebebeb;}
 #viewer{
     height:550px;
-    width:850px;
+    width:100%;
     overflow:hidden;
 }
 .hit{display:block;float:left;width:5px;height:20px;margin-right:3px;}

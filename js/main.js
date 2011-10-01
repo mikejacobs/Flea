@@ -17,7 +17,7 @@ var map = []
 var mapHeight = 0;
 var mapWidth = 0;
 var character;
-var view = {x:850,y:550};
+var view = {};
 var allCanvases;
 // var ctx;
 tiles = []
@@ -45,9 +45,9 @@ tileH = 10;
 // }
 
 function draw(){
-    if(editor){
-	    scn.clearRect(ch.x1*tileW -2, ch.y1*tileH -2, tileW+2, tileH+2); 
-	}
+ //    if(editor && ch){
+	//     scn.clearRect(ch.x1*tileW -2, ch.y1*tileH -2, tileW+2, tileH+2); 
+	// }
     // scn.clear = false;
     scn.clearRect(0,0,mapWidth,mapHeight); // clear canvas
     // scn.clearRect(person.x, person.y, tileW, tileH); 
@@ -68,6 +68,7 @@ function gameLoad(map){
     $("canvas").each(function(){
         $(this).attr({"width": tilesX*tileW, "height":tilesY*tileH})
     })
+    view = {x:$(window).width(), y:$(window).height()}
 
     // if loading a map
     // if(map) {
@@ -228,19 +229,22 @@ var shiftedX = 0;
 function shiftView(dir){
     // console.log(person.x, person.y);
     if(dir>0 && view.x - (person.x - shiftedX)< view.x*1/3){
-        shiftedX+=2;
-        if(view.x - (person.x - shiftedX)< view.x*1/8){
-            shiftedX+=3;
-        }
-        console.log("right", dir, "shifted", shiftedX, "person.x", person.x, "calculation", view.x - (person.x + shiftedX), "view2/3", view.x*2/3)
+        percent = (view.x - (person.x - shiftedX))/view.x
+        console.log("percent to edge", 1-percent)
+        shiftedX+= (person.speed*(1-percent));
+        // if(view.x - (person.x - shiftedX)< view.x*1/8){
+        //     shiftedX+=3;
+        // }
+        // console.log("right", dir, "shifted", shiftedX, "person.x", person.x, "calculation", view.x - (person.x + shiftedX), "view2/3", view.x*2/3)
         allCanvases.each(function(){
             $(this).css("left", -shiftedX + "px");
         })
     }else if(dir<0 && person.x - shiftedX < view.x*1/3 && shiftedX > 0){
-        shiftedX-=2;
-        if(person.x - shiftedX < view.x*1/8){
-            shiftedX-=3;
-        }
+        percent = (person.x - shiftedX) / view.x
+        shiftedX-= (person.speed*(1-percent));
+        // if(person.x - shiftedX < view.x*1/8){
+        //     shiftedX-=3;
+        // }
         console.log("left", dir, shiftedX, person.x)
         allCanvases.each(function(){
             $(this).css("left", -shiftedX + "px");
