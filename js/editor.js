@@ -2,6 +2,7 @@
 // = crosshair =
 // ===========
 var crosshairs = {}
+var crosshairType = "brush"
 var dragging = false;
 var startX = 0
 var startY = 0
@@ -31,8 +32,41 @@ makeCrosshair = function(x, y) {
     crosshairs.draw = function() {
         this.dirx = (this.x1 - this.x2) / Math.abs(this.x1 - this.x2) || 0
         this.diry = (this.y1 - this.y2) / Math.abs(this.y1 - this.y2) || 0
-        scn.clearRect(ch.x1*tileW -2, ch.y1*tileH -2, tileW+2, tileH+2); 
+        scn.clearRect(ch.x1 * tileW - 2, ch.y1 * tileH - 2, tileW + 2, tileH + 2);
         scn.strokeRect(this.x1 * tileW, this.y1 * tileH, (this.x1 - this.x2) * -tileW, (this.y1 - this.y2) * -tileH)
+    }
+    crosshairs.makeMaterial = function(x, y, xo, yo) {
+        if (shiftButton) {
+            if (currentMaterial == "background") {
+                if (bg_tiles[ch.y1 + y + yo][ch.x1 + x + xo]) {
+                    bg_tiles[ch.y1 + y + yo][ch.x1 + x + xo].remove()
+                }
+            } else {
+                if (tiles[ch.y1 + y + yo][ch.x1 + x + xo]) {
+                    tiles[ch.y1 + y + yo][ch.x1 + x + xo].remove()
+                }
+            }
+        } else {
+            var c = $.jPicker.ColorMethods.hexToRgba(opts.color)
+            if (currentMaterial == "person") {
+                person.x = (ch.x1 * tileW) + tileW / 2;
+                person.y = ((ch.y1 + 1) * tileH) - person.h;
+                person.startX = person.x;
+                person.startY = person.y;
+                person._color = "rgba(" + c.r + "," + c.g + "," + c.b + "," + c.a + ")"
+            } else {
+                makeTile({
+                    type: currentMaterial,
+                    xtile: ch.x1 + x + xo,
+                    ytile: ch.y1 + y + yo,
+                    w: tileW,
+                    h: tileH,
+                    moves: opts.moves,
+                    color: "rgba(" + c.r + "," + c.g + "," + c.b + "," + c.a + ")",
+                    spikes: $("input[name='spikes']:checked").val()
+                })
+            }
+        }
     }
     crosshairs.xtile = x
     crosshairs.ytile = y
@@ -44,11 +78,8 @@ function getOpts() {
     var form = $("form#" + currentMaterial).serialize().split("&")
     for (pair in form) {
         o = form[pair].split("=")
-        // console.log("o[1]", o[0], o[1])
-        // if(typeof o[1] == )
         if (o[1] == "true") o[1] = true;
         if (o[1] == "false") o[1] = false;
-        // if(!isNaN(parseInt(o[1]))) o[1] = parseInt(o[1]);
         opts["" + o[0]] = o[1]
     }
     return opts
@@ -73,53 +104,66 @@ $(function() {
     });
     // crosshair
     $("#screen").mouseout(function(e) {
-        if (ch && !dragging) {
-            ch.display = false;
-            // if(dragging){
-            //     dragging = false;
-            // }
+        if (ch) {
             for (o in movers) {
-                if (movers[o].type == "crosshair") removeFromArray(movers, o);
+                if (movers[o].type == "crosshair") {
+                    removeFromArray(movers, o);
+                }
             }
-            // ch.remove();
             ch = 0;
         }
-    // scn.clearRect(0,0,mapWidth,mapHeight);
+
         // ch.display = false;
     })
     $("#screen").mouseover(function(e) {
-        if(!ch) ch = makeCrosshair(Math.round((e.pageX+ shiftedX - 5) / 10), Math.round((e.pageY - 5) / 10));
+        if (!ch) {
+            ch = makeCrosshair(Math.round((e.pageX + shiftedX - 5) / 10), Math.round((e.pageY - 5) / 10));
+            ch.chtype = crosshairType;
+        }
     })
     $("#screen").mousemove(function(e) {
-        // console.log(e.pageX, Math.round(e.pageX / 10)*10)
-        // if (ch) ch.remove()
-
-        xtile = Math.round((e.pageX+ shiftedX - 5) / 10);
+        xtile = Math.round((e.pageX + shiftedX - 5) / 10);
         ytile = Math.round((e.pageY - 5) / 10);
-        
-
         if (ch && !dragging) {
-
             ch.display = true;
             //TODO remove and draw
             ch.update(xtile, ytile, xtile + 1, ytile + 1)
-
-            // console.log("ch", ch.xtile, ch.ytile, movers[Math.round((e.pageY-5) / 10)][Math.round((e.pageX-5) / 10)], person.xtile, person.ytile)
-            // ch.draw()
         }
-        // console.log("drag?", ch && dragging && ch.prevytile != ytile && ch.prevxtile != xtile, ch , dragging , ch.prevytile != ytile , ch.prevxtile != xtile)
-        if (ch && dragging && prevytile != ytile && prevxtile != xtile) {
-            // console.log("makearea", dragging, startX, startY, xtile, ytile, true, tileTypes.crosshair)
-            ch.update(startX, startY, xtile, ytile, true)
+        if (ch && dragging && prevytile != ytile && prevxtile != xtile && ch.chtype == "box") {
+            ch.update(startX, startY, xtile, ytile)
+        }
+        if (ch.chtype == "brush" && dragging) {
+            if (shiftButton) {
+                if (currentMaterial == "background") {
+                    if (bg_tiles[ytile][xtile]) {
+                        bg_tiles[ytile][xtile].remove()
+                    }
+                } else {
+                    if (tiles[ytile][xtile]) {
+                        tiles[ytile][xtile].remove()
+                    }
+                }
+            } else {
+                var c = $.jPicker.ColorMethods.hexToRgba(opts.color)
+                makeTile({
+                    type: currentMaterial,
+                    xtile: xtile,
+                    ytile: ytile,
+                    w: tileW,
+                    h: tileH,
+                    moves: opts.moves,
+                    color: "rgba(" + c.r + "," + c.g + "," + c.b + "," + c.a + ")",
+                    spikes: $("input[name='spikes']:checked").val()
+                })
+            }
         }
         return false;
-        // }
     })
     // make object
     $("#screen").mousedown(function(e) {
         if (ch) {
+            dragging = true;
             if (currentMaterial != "person") {
-                dragging = true;
                 startX = Math.round((e.pageX + shiftedX - 5) / 10);
                 startY = Math.round((e.pageY - 5) / 10);
             }
@@ -129,21 +173,13 @@ $(function() {
     $("#screen").mouseup(function(e) {
         if (ch) {
             opts = getOpts()
-            // console.log("mouseup opts", opts)
-            // console.log($.jPicker.ColorMethods.hexToRgba(opts.color))
             if (dragging) {
-                dragging = false;
                 opts.width = Math.abs(ch.x1 - ch.x2)
                 opts.height = Math.abs(ch.y1 - ch.y2)
             } else {
                 opts.width = tileW
                 opts.height = tileH
             }
-            // console.log(e.pageX, Math.round(e.pageX / 10)*10)
-            // xtile = Math.round((e.pageX-5) / 10);
-            // ytile = Math.round((e.pageY-5) / 10);
-            // console.log('new game_obj({type:"'+currentMaterial+'", xtile:'+ch.xtile +', ytile:'+ ch.ytile+', w:'+opts.width+', h:'+opts.height+', moves:'+opts.moves+'})')
-            // console.log(opts, currentMaterial)
             //calculate offsets
             var xo = (ch.dirx > 0) ? -1 : 0;
             var yo = (ch.diry > 0) ? -1 : 0;
@@ -151,58 +187,24 @@ $(function() {
             for (var y = 0; Math.abs(y) < opts.height; y -= ch.diry) {
                 for (var x = 0; Math.abs(x) < opts.width; x -= ch.dirx) {
                     if (inBounds(ch.x1 + x, ch.y1 + y)) {
-                        // console.log()
-                        if (shiftButton) {
-                            if (currentMaterial == "background") {
-                                if (bg_tiles[ch.y1 + y + yo][ch.x1 + x + xo]) {
-                                    bg_tiles[ch.y1 + y + yo][ch.x1 + x + xo].remove()
-                                }
-                            } else {
-                                if (tiles[ch.y1 + y + yo][ch.x1 + x + xo]) {
-                                    tiles[ch.y1 + y + yo][ch.x1 + x + xo].remove()
-                                }
-                            }
-
-                        } else {
-                            var c = $.jPicker.ColorMethods.hexToRgba(opts.color)
-                            // console.log("current material: " + currentMaterial)
-                            // console.log('new game_obj({type:"'+currentMaterial+'", xtile:'+(ch.x1+x+xo) +', ytile:'+ (ch.y1+y+yo)+', w:'+tileW+', h:'+tileH+', moves:'+opts.moves+'})')
-                            if (currentMaterial == "person") {
-                                person.x = (ch.x1 * tileW) + tileW / 2;
-                                person.y = ((ch.y1 + 1) * tileH) - person.h;
-                                person.startX = person.x;
-                                person.startY = person.y;
-                                person._color = "rgba(" + c.r + "," + c.g + "," + c.b + "," + c.a + ")"
-                            } else {
-                                makeTile({
-                                    type: currentMaterial,
-                                    xtile: ch.x1 + x + xo,
-                                    ytile: (ch.y1 + y + yo),
-                                    w: tileW,
-                                    h: tileH,
-                                    moves: opts.moves,
-                                    color: "rgba(" + c.r + "," + c.g + "," + c.b + "," + c.a + ")",
-                                    spikes: $("input[name='spikes']:checked").val()
-                                })
-                            }
-                        }
+                        ch.makeMaterial(x, y, xo, yo)
                     }
                 }
             }
             static_draw()
         }
+        dragging = false;
+
 
     }).css("cursor", "default")
     $(".material").click(function() {
         //change material
-        // alert("material change"+ $(this).attr("type"))
         $(".material").css({
             "background": "none",
             "color": "black"
         })
         currentMaterial = $(this).attr("type")
         cursor = $(this).attr("cursor")
-        // console.log(currentMaterial)
         $(this).css({
             "background": "#000",
             "color": "white"
@@ -223,31 +225,24 @@ $(function() {
         }
 
     })
-    $(".crosshair").click(function(){
+    $(".crosshair").click(function() {
         $(".crosshair").removeClass("active")
         $(this).addClass("active")
-        crosshair.type = $(this).attr("type")
+        crosshairType = $(this).attr("type")
+        ch.chtype = crosshairType;
         //TODO: change cursor based on crosshair type
-        if(crosshair.type=="box")
-            $("#screen").css("cursor", "crosshair")
-        else
-            $("#screen").css("cursor", "nw-resize")
-
+        if (ch.chtype == "box") $("#screen").css("cursor", "crosshair")
+        else $("#screen").css("cursor", "nw-resize")
     })
     $("#opts .tool").hide()
     $("#person_apply").click(function() {
         opts = getOpts()
-        // clearInterval(drawing)
-        // person.remove();
         person.startX = Number(opts.xtile);
         person.startY = Number(opts.ytile);
 
         c = $.jPicker.ColorMethods.hexToRgba(opts.color);
         person._color = "rgba(" + c.r + "," + c.g + "," + c.b + "," + c.a + ")";
         person.color = person._color;
-        // console.log(person._color)
-        // drawing = setInterval(draw, 40)
-        // makePerson({type:"person", id:"person", xtile:opts.xtime, ytile:opts.ytile, w:opts.w, h:opts.h, moves:true})
     })
     $("#save").click(function() {
 
@@ -333,17 +328,12 @@ function importMap(maparr) {
                 xtile: parseInt(el[2]),
                 ytile: parseInt(el[3])
             })
-            // console.log("sliced: " + el[0] + "" + el[1] + "" + el[2] + "" + el[3])
-            // if(arr[y][x]) output.push("" + encode_type(arr[y][x].type) + "|" + arr[y][x].color + "|" + arr[y][x].xtile + "|" + arr[y][x].ytile)
-            // output.push(row)
         }
-        // console.log("output", output)
         return output
     }
     maparr.tiles = decompressTiles(maparr.tiles)
     maparr.bg = decompressTiles(maparr.bg)
 
-    // console.log("import tiles", maparr.tiles)
     scn.clearRect(0, 0, mapWidth, mapHeight); // clear canvas
     resetGame(maparr)
 }
@@ -367,12 +357,8 @@ function exportMap() {
     maparr.bg = []
     compressTiles = function(arr, output) {
             for (var y = 0; y < mapHeight; ++y) {
-                // var row = []
                 for (var x = 0; x < mapWidth; ++x) {
-                    // 0|ffffff|1|34
                     if (arr[y][x] && arr[y][x] != 0) {
-                        // console.log("obj", arr[y][x])
-                        // console.log("type= ", arr[y][x].type)
                         output.push("" + encode_type[arr[y][x].type] + "|" + arr[y][x].color + "|" + arr[y][x].xtile + "|" + arr[y][x].ytile)
                     }
                 }
@@ -415,7 +401,7 @@ get_v = function(rgb) {
 }
 
 removeFromArray = function(array, from, to) {
-  var rest = array.slice((to || from) + 1 || array.length);
-  array.length = from < 0 ? array.length + from : from;
-  return array.push.apply(array, rest);
+    var rest = array.slice((to || from) + 1 || array.length);
+    array.length = from < 0 ? array.length + from : from;
+    return array.push.apply(array, rest);
 };
