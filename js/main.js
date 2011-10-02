@@ -29,6 +29,7 @@ num_stars = 0;
 num_hits = 10;
 max_hits = 15;
 just_hit = false;
+commandButton = false;
 shiftButton = false;
 spaceBar = false;
 rightArrow = false;

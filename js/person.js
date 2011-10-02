@@ -374,6 +374,7 @@ var makePerson = function(args) {
             //check for blood
             // console.log("is blood?", person.ytile+2, person.xtile, tiles[person.ytile+2][person.xtile])
             var checked = {}
+            var toRemove = []
             checkForBlood = function(xtile, ytile) {
                 if (!checked["" + xtile + ytile] && shiftButton) {
                     var thisTile = tiles[ytile][xtile];

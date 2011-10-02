@@ -36,7 +36,7 @@ makeCrosshair = function(x, y) {
         scn.strokeRect(this.x1 * tileW, this.y1 * tileH, (this.x1 - this.x2) * -tileW, (this.y1 - this.y2) * -tileH)
     }
     crosshairs.makeMaterial = function(x, y, xo, yo) {
-        if (shiftButton) {
+        if (commandButton) {
             if (currentMaterial == "background") {
                 if (bg_tiles[ch.y1 + y + yo][ch.x1 + x + xo]) {
                     bg_tiles[ch.y1 + y + yo][ch.x1 + x + xo].remove()
@@ -133,7 +133,7 @@ $(function() {
             ch.update(startX, startY, xtile, ytile)
         }
         if (ch.chtype == "brush" && dragging) {
-            if (shiftButton) {
+            if (commandButton) {
                 if (currentMaterial == "background") {
                     if (bg_tiles[ytile][xtile]) {
                         bg_tiles[ytile][xtile].remove()

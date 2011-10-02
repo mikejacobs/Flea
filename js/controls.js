@@ -16,6 +16,7 @@ just_hit = false;
 
 downmap = {
 	"16": function(){shiftButton = true;},
+	"91": function(){commandButton = true;},
 	"32": function(){spaceBar = true;},
 	"39": function(){rightArrow = true;},
 	"37": function(){leftArrow = true;},
@@ -23,6 +24,7 @@ downmap = {
 };	
 upmap = {
 	"16": function(){shiftButton = false;},
+	"91": function(){commandButton = false;},
 	"32": function(){spaceBar = false;},
 	"39": function(){rightArrow = false;},
 	"37": function(){leftArrow = false;},
@@ -31,7 +33,7 @@ upmap = {
 
 function route(e){
     // e.stop()
-    // console.log(e.keyCode)
+    console.log(e.keyCode)
 	var fxn = (e.type == "keydown") ? downmap[e.keyCode+""] : upmap[e.keyCode+""]
 	if(fxn) {fxn();}
 }
