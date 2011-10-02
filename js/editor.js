@@ -27,21 +27,12 @@ makeCrosshair = function(x, y) {
         this.y1 = y1
         this.x2 = x2
         this.y2 = y2
-
-        // xoffset = 
-        // yoffset = 
-        // console.log("outline", this.x1, this.y1, this.x2, this.y2)
     }
     crosshairs.draw = function() {
-
         this.dirx = (this.x1 - this.x2) / Math.abs(this.x1 - this.x2) || 0
         this.diry = (this.y1 - this.y2) / Math.abs(this.y1 - this.y2) || 0
         scn.clearRect(ch.x1*tileW -2, ch.y1*tileH -2, tileW+2, tileH+2); 
-
-        // scn.clearRect(this.prevxtile*tileW -2, this.prevytile*tileH -2, tileW+2, tileH+2); 
-        // scn.strokeStyle = "rgb(255,0,0,1)";
         scn.strokeRect(this.x1 * tileW, this.y1 * tileH, (this.x1 - this.x2) * -tileW, (this.y1 - this.y2) * -tileH)
-
     }
     crosshairs.xtile = x
     crosshairs.ytile = y
@@ -105,7 +96,7 @@ $(function() {
 
         xtile = Math.round((e.pageX+ shiftedX - 5) / 10);
         ytile = Math.round((e.pageY - 5) / 10);
-        $(this).css("cursor", "crosshair")
+        
 
         if (ch && !dragging) {
 
@@ -127,7 +118,6 @@ $(function() {
     // make object
     $("#screen").mousedown(function(e) {
         if (ch) {
-            $(this).css("cursor", "crosshair")
             if (currentMaterial != "person") {
                 dragging = true;
                 startX = Math.round((e.pageX + shiftedX - 5) / 10);
@@ -233,8 +223,17 @@ $(function() {
         }
 
     })
+    $(".crosshair").click(function(){
+        $(".crosshair").removeClass("active")
+        $(this).addClass("active")
+        crosshair.type = $(this).attr("type")
+        //TODO: change cursor based on crosshair type
+        if(crosshair.type=="box")
+            $("#screen").css("cursor", "crosshair")
+        else
+            $("#screen").css("cursor", "nw-resize")
 
-    $("#platform").trigger("click")
+    })
     $("#opts .tool").hide()
     $("#person_apply").click(function() {
         opts = getOpts()

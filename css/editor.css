@@ -87,3 +87,10 @@
     width:490px;
     height:290px;
 }
+.crosshair{
+    color:#000;
+}
+.crosshair.active{
+    color:#fff;
+    background:#000;
+}
