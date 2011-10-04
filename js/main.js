@@ -201,7 +201,7 @@ draw_tiles = function(arr){
 }
 function generateMap(w,h){
     var map = {width:w, height:h}
-    console.log("genmap", w, h)
+    // console.log("genmap", w, h)
     map.person = {type:"person", id:"person", xtile:1, ytile:2, w:10, h:10, moves:true}
     map.tiles = []
     map.bg = []
@@ -231,7 +231,7 @@ function shiftView(dir){
     // console.log(person.x, person.y);
     if(dir>0 && view.x - (person.x - shiftedX)< view.x*1/3){
         percent = (view.x - (person.x - shiftedX))/view.x
-        console.log("percent to edge", 1-percent)
+        // console.log("percent to edge", 1-percent)
         shiftedX+= (person.speed*(1-percent));
         // if(view.x - (person.x - shiftedX)< view.x*1/8){
         //     shiftedX+=3;
@@ -246,7 +246,7 @@ function shiftView(dir){
         // if(person.x - shiftedX < view.x*1/8){
         //     shiftedX-=3;
         // }
-        console.log("left", dir, shiftedX, person.x)
+        // console.log("left", dir, shiftedX, person.x)
         allCanvases.each(function(){
             $(this).css("left", -shiftedX + "px");
         })

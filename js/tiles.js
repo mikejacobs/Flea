@@ -165,7 +165,7 @@ makeTile = function(obj) {
     // if(parseInt(obj.type) != NaN) obj.type = decode_type[parseInt(obj.type)]
     // if(typeof obj.type == "number") obj.type = decode_type[obj.type]
     var o = tileTypes[obj.type]
-    console.log(o.type)
+    // console.log(o.type)
     //overwrite with specified vals
     for (arg in obj) o[arg] = obj[arg];
     return new game_obj(o)

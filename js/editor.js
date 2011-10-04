@@ -2,7 +2,7 @@
 // = crosshair =
 // ===========
 var crosshairs = {}
-var crosshairType = "brush"
+var crosshairType = "box"
 var dragging = false;
 var startX = 0
 var startY = 0
@@ -19,6 +19,8 @@ makeCrosshair = function(x, y) {
     crosshairs.y1 = 0
     crosshairs.x2 = 0
     crosshairs.y2 = 0
+    this.chtype = crosshairType;
+    console.log(" type", crosshairType)
     this.dirx = 0
     this.diry = 0
     crosshairs.update = function(x1, y1, x2, y2) {
@@ -117,22 +119,43 @@ $(function() {
     })
     $("#screen").mouseover(function(e) {
         if (!ch) {
+            console.log("no ch")
             ch = makeCrosshair(Math.round((e.pageX + shiftedX - 5) / 10), Math.round((e.pageY - 5) / 10));
-            ch.chtype = crosshairType;
+            ch.chtype = $(".crosshair.active").attr("type");
+        } else{
+            ch.chtype = $(".crosshair.active").attr("type");
+            console.log("ch = true", ch.chtype)
         }
     })
+    $("#screen").mousedown(function(e) {
+        if (ch) {
+            dragging = true;
+            console.log("mousedown", dragging)
+
+            if (currentMaterial != "person") {
+                startX = Math.round((e.pageX + shiftedX - 5) / 10);
+                startY = Math.round((e.pageY - 5) / 10);
+            }
+        }
+        return false;
+    })
     $("#screen").mousemove(function(e) {
+        console.log("mousemove", dragging, ch.chtype)
         xtile = Math.round((e.pageX + shiftedX - 5) / 10);
         ytile = Math.round((e.pageY - 5) / 10);
         if (ch && !dragging) {
+            console.log("not dragging")
+
             ch.display = true;
             //TODO remove and draw
             ch.update(xtile, ytile, xtile + 1, ytile + 1)
         }
         if (ch && dragging && prevytile != ytile && prevxtile != xtile && ch.chtype == "box") {
+            console.log("dragging")
             ch.update(startX, startY, xtile, ytile)
         }
         if (ch.chtype == "brush" && dragging) {
+            console.log("dragging")
             if (commandButton) {
                 if (currentMaterial == "background") {
                     if (bg_tiles[ytile][xtile]) {
@@ -144,7 +167,8 @@ $(function() {
                     }
                 }
             } else {
-                var c = $.jPicker.ColorMethods.hexToRgba(opts.color)
+                console.log(opts.color)
+                var c = $.jPicker.ColorMethods.hexToRgba(opts.color || {r:0,g:0,b:0,a:1})
                 makeTile({
                     type: currentMaterial,
                     xtile: xtile,
@@ -160,16 +184,6 @@ $(function() {
         return false;
     })
     // make object
-    $("#screen").mousedown(function(e) {
-        if (ch) {
-            dragging = true;
-            if (currentMaterial != "person") {
-                startX = Math.round((e.pageX + shiftedX - 5) / 10);
-                startY = Math.round((e.pageY - 5) / 10);
-            }
-        }
-        return false;
-    })
     $("#screen").mouseup(function(e) {
         if (ch) {
             opts = getOpts()
@@ -196,7 +210,7 @@ $(function() {
         dragging = false;
 
 
-    }).css("cursor", "default")
+    })
     $(".material").click(function() {
         //change material
         $(".material").css({

@@ -13,6 +13,8 @@ num_stars = 0;
 num_hits = 10;
 max_hits = 15;
 just_hit = false;
+var slurpingBlood = false;
+var checkingForBlood = false;
 
 function detectKeys() {
     moved = false;
@@ -375,21 +377,70 @@ var makePerson = function(args) {
             // console.log("is blood?", person.ytile+2, person.xtile, tiles[person.ytile+2][person.xtile])
             var checked = {}
             var toRemove = []
-            checkForBlood = function(xtile, ytile) {
-                if (!checked["" + xtile + ytile] && shiftButton) {
-                    var thisTile = tiles[ytile][xtile];
-                    if (thisTile && thisTile.type == "heart") {
-                        person.blood++;
-                        console.log(thisTile.type, xtile, ytile)
-                        checked["" + xtile + ytile] = true
-                        setTimeout(function(){checkForBlood(xtile - 1, ytile)}, 100)
-                        setTimeout(function(){checkForBlood(xtile + 1, ytile)}, 100)
-                        thisTile.remove()
+
+            // checkForBlood = function(xtile, ytile) {
+            //     //TODO figure out a way to slurping = false
+            //         if (!checked["" + xtile + ytile]) {
+            //             var thisTile = tiles[ytile][xtile];
+            //             if (thisTile && thisTile.type == "heart") {
+            //                 // console.log(thisTile.type, xtile, ytile)
+            //                 checked["" + xtile + ytile] = true
+            //                 if (!checkForBlood(xtile + 1, ytile), !checkForBlood(xtile - 1, ytile)) {
+            //                     setTimeout(function() {
+            //                         if (shiftButton) {
+            //                             thisTile.remove()
+            //                             person.blood++;
+            //                         }
+            //                     }, 10);
+            //                 }
+            //                 return true;
+            //             }
+            //         }
+            //         slurping = false;
+            //         return false;
+            //     }
+            // var offset = 0;
+            isBlood = []
+            //TODO MAKE SLURPING WORK
+            checkForBlood = function(xtile, ytile, offset) {
+                    if(offset = 0) checkingForBlood = true;
+                    if (!checked["" + xtile + offset + ytile]) {
+                        var thisTile = tiles[ytile][xtile + offset];
+                        if (thisTile && thisTile.type == "heart") {
+                            checked["" + xtile + offset + ytile] = true;
+                            isBlood.push([xtile + offset, ytile])
+                            console.log("checking", ytile, xtile + offset, offset)
+                            // increment or switch
+                            // offset = (offset <= 0) ? Math.abs(offset) + 1 : -offset;                            
+                            // checkForBlood(xtile, ytile, offset)
+                            // offset = (offset <= 0) ? Math.abs(offset) + 1 : -offset;  
+                            // checkForBlood(xtile, ytile, offset)
+                            // return true;
+                        }
+                        // return false;
                     }
+                    if(offset = 0) checkingForBlood = false;
                 }
-                return false;
+            slurpBlood = function() {
+                slurpingBlood = true;
+                for (drop in isBlood) {
+                    drop = isBlood.pop()
+                    console.log("slurping", drop[1],drop[0])
+                    setTimeout(function() {
+                        if (shiftButton) {
+                            tiles[drop[1]][drop[0]].remove()
+                            person.blood++;
+                        }
+                    }, 10);
+                }
+                setTimeout(function() {
+                    slurpingBlood = false;
+                }, isBlood.length * 10);
             }
-            checkForBlood(person.xtile, person.ytile + 2);
+            if (!slurpingBlood && !checkingForBlood) {
+                checkForBlood(person.xtile, person.ytile + 2, 0);
+                slurpBlood()
+            }
 
         }
     }

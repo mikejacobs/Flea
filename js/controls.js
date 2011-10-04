@@ -33,7 +33,7 @@ upmap = {
 
 function route(e){
     // e.stop()
-    console.log(e.keyCode)
+    // console.log(e.keyCode)
 	var fxn = (e.type == "keydown") ? downmap[e.keyCode+""] : upmap[e.keyCode+""]
 	if(fxn) {fxn();}
 }
