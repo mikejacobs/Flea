@@ -159,7 +159,7 @@ function resetGame(map){
     scn = $('#screen').get(0).getContext('2d');
 	stc = $('#static').get(0).getContext('2d');
 	bg = $('#background').get(0).getContext('2d');
-    scn.clearRect(0,0,mapHWidth,mapHeight); // clear canvas
+    scn.clearRect(0,0,mapWidth,mapHeight); // clear canvas
     stc.clearRect(0,0,mapWidth,mapHeight);
     bg.clearRect(0,0,mapWidth,mapHeight);
     allCanvases.each(function(){
