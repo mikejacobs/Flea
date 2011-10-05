@@ -264,12 +264,12 @@ $(function() {
         console.log("sending", encode)
         $.ajax({
             type: 'POST',
-            url: 'http://mjacobs.me/savelevel',
+            url: 'http://mjacobs.me/a/savelevel',
             data: {
                 "level": encode
             },
             success: function(data) {
-                console.log("sent", data);
+                // console.log("sent", data);
             }
         });
     })
@@ -328,7 +328,7 @@ function makeArea(x1, y1, x2, y2, outline, opts) {
 
 function importMap(maparr) {
     // console.log(typeof maparr)
-    // console.log("importing this map", maparr)
+    console.log("importing this compressed map", maparr)
     maparr = $.evalJSON(maparr)
     // console.log("importing this map's tiles ", maparr["tiles"])
     decompressTiles = function(arr) {
@@ -347,7 +347,7 @@ function importMap(maparr) {
     }
     maparr.tiles = decompressTiles(maparr.tiles)
     maparr.bg = decompressTiles(maparr.bg)
-
+    // console.log("decompressed map", maparr)
     scn.clearRect(0, 0, mapWidth, mapHeight); // clear canvas
     resetGame(maparr)
 }
@@ -366,7 +366,7 @@ function exportMap() {
             moves: person.moves
         }
     }
-    // console.log("genmap", w, h)
+    // console.log("map precompress", tiles)
     maparr.tiles = []
     maparr.bg = []
     compressTiles = function(arr, output) {

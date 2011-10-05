@@ -1,12 +1,12 @@
 #crosshairType{
     position:absolute;
-    top:560px;
+    top:620px;
     left:860px;
 }
 
 #materials{
     position:absolute;
-    top:560px;
+    top:620px;
     left:20px;
 }
     .material{
@@ -40,7 +40,7 @@
 #opts{
     position:absolute;
     left:200px;
-    top:560px;
+    top:620px;
     width:200px;
     border:1px dotted #777;
     padding:10px;
@@ -63,7 +63,7 @@
 #mapfxns{
     position:absolute;
     left:490px;
-    top:560px;
+    top:620px;
 /*        width:200px;*/
 /*        height:20px;*/
 }

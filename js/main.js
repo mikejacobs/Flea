@@ -72,29 +72,29 @@ function gameLoad(map){
     view = {x:$(window).width(), y:$(window).height()}
 
     // if loading a map
-    // if(map) {
-    //     // map = $.evalJSON(map)
-    //     if(map[0]["id"]){ /* if loaded through template */
-    //         console.log("loading map from db")
-    //         tempmap = generateMap(tiles, tiles);
-    //         // map = $.evalJSON(map)
-    //         // console.log("importing this map's tiles ", maparr["tiles"])
-    //         decompressTiles = function(arr){
-    //             // console.log("array to decompress"+arr)
-    //             output = []
-    //             for (t in arr) {
-    //                 el = arr[t].split("|")
-    //                 output.push({type: decode_type[parseInt(el[0])], color: el[1], xtile: parseInt(el[2]), ytile: parseInt(el[3])})
-    //     	    }
-    //             // console.log("output", output)
-    //     	    return output
-    //     	}
-    //     	tempmap.tiles = decompressTiles(map[0]["level"]["tiles"])
-    //     	tempmap.bg = decompressTiles(map[0]["level"]["bg"])
-    //     	map = tempmap
-    //     }
-    //     tiles = map.width;
-    // }
+    if(map) {
+        // map = $.evalJSON(map)
+        if(map[0]["id"]){ /* if loaded through template */
+            console.log("loading map from db")
+            tempmap = generateMap(tiles, tiles);
+            // map = $.evalJSON(map)
+            // console.log("importing this map's tiles ", maparr["tiles"])
+            decompressTiles = function(arr){
+                // console.log("array to decompress"+arr)
+                output = []
+                for (t in arr) {
+                    el = arr[t].split("|")
+                    output.push({type: decode_type[parseInt(el[0])], color: el[1], xtile: parseInt(el[2]), ytile: parseInt(el[3])})
+        	    }
+                // console.log("output", output)
+        	    return output
+        	}
+        	tempmap.tiles = decompressTiles(map[0]["level"]["tiles"])
+        	tempmap.bg = decompressTiles(map[0]["level"]["bg"])
+        	map = tempmap
+        }
+        tiles = map.width;
+    }
     init = true;
     // console.log("map", map)
     empty_map = generateMap(tilesX * tileW, tilesY * tileH);
