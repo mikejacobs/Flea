@@ -1,0 +1,7 @@
+function buildEntities(){
+  
+}
+
+function Platform(){
+	
+}
