@@ -1,4 +1,11 @@
+var canvas, ctx;
+var world;
+var SCALE = 30;
 var player;
+var b2Vec2, b2BodyDef, b2Body, b2FixtureDef, b2Fixture, b2World, b2MassData, b2PolygonShape, b2CircleShape, b2DebugDraw;
+var moveState;
+var commandButton, shiftButton, spaceBar, rightArrow, leftArrow, upArrow;
+var numFootContacts, numHeadContacts;
 $(function() {
 
     // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -9,39 +16,23 @@ $(function() {
         };
     })();
 
-    var canvas = document.getElementById("canvas");
-    var ctx = canvas.getContext("2d");
+    canvas = document.getElementById("canvas");
+    ctx = canvas.getContext("2d");
 
-    var world;
-    var b2Vec2 = Box2D.Common.Math.b2Vec2,
-        b2BodyDef = Box2D.Dynamics.b2BodyDef,
-        b2Body = Box2D.Dynamics.b2Body,
-        b2FixtureDef = Box2D.Dynamics.b2FixtureDef,
-        b2Fixture = Box2D.Dynamics.b2Fixture,
-        b2World = Box2D.Dynamics.b2World,
-        b2MassData = Box2D.Collision.Shapes.b2MassData,
-        b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape,
-        b2CircleShape = Box2D.Collision.Shapes.b2CircleShape,
-        b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
-    var moveState = 0;
-    var commandButton = false,
-        shiftButton = false,
-        spaceBar = false,
-        rightArrow = false,
-        leftArrow = false,
-        upArrow = false;
-    var numFootContacts = 0;
+    world;
+    b2Vec2 = Box2D.Common.Math.b2Vec2, b2BodyDef = Box2D.Dynamics.b2BodyDef, b2Body = Box2D.Dynamics.b2Body, b2FixtureDef = Box2D.Dynamics.b2FixtureDef, b2Fixture = Box2D.Dynamics.b2Fixture, b2World = Box2D.Dynamics.b2World, b2MassData = Box2D.Collision.Shapes.b2MassData, b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape, b2CircleShape = Box2D.Collision.Shapes.b2CircleShape, b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
+    moveState = 0;
+    commandButton = false, shiftButton = false, spaceBar = false, rightArrow = false, leftArrow = false, upArrow = false;
+    numFootContacts = 0;
 
     world = new b2World(
     new b2Vec2(0, 50) //gravity
     , true //allow sleep
     );
 
-    var SCALE = 30;
-
     var fixDef = new b2FixtureDef;
     fixDef.density = 1.0;
-    fixDef.friction = 0.5;
+    fixDef.friction = 0.8;
     fixDef.restitution = 0;
     // fixDef.restitution = 0;
     var bodyDef = new b2BodyDef;
@@ -56,32 +47,35 @@ $(function() {
     fixDef.shape = new b2PolygonShape;
 
     // half width, half height. eg actual height here is 1 unit
-    fixDef.shape.SetAsBox((600 / SCALE) / 2, (10 / SCALE) / 2);
+    fixDef.shape.SetAsBox((canvas.width / SCALE) / 2, (10 / SCALE) / 2);
+    world.CreateBody(bodyDef).CreateFixture(fixDef);
+    setupPlayer()
+
+    //create platform
+    fixDef = new b2FixtureDef;
+    fixDef.density = 1.0;
+    fixDef.friction = 0.5;
+    fixDef.restitution = 0;
+    bodyDef = new b2BodyDef;
+    bodyDef.type = b2Body.b2_staticBody;
+    bodyDef.position.x = 200 / SCALE;
+    bodyDef.position.y = 500 / SCALE;
+    fixDef.shape = new b2PolygonShape;
+    fixDef.shape.SetAsBox((200 / SCALE) / 2, (10 / SCALE) / 2);
     world.CreateBody(bodyDef).CreateFixture(fixDef);
 
-    //create the player
-    bodyDef.type = b2Body.b2_dynamicBody;
-    fixDef.shape = new b2PolygonShape;
-    fixDef.shape.SetAsBox(.3, .3);
+    //create platform
+    fixDef = new b2FixtureDef;
+    fixDef.density = 1.0;
+    fixDef.friction = 0.5;
     fixDef.restitution = 0;
-    bodyDef.position.x = 2;
-    bodyDef.position.y = 1;
-    // fixDef.density = 10;
-    // bodyDef.restitution = 0;
-    // bodyDef.restitution = 0;
-    player = world.CreateBody(bodyDef);
-    player.fixture = player.CreateFixture(fixDef);
-
-    //foot sensor on player
-    // footSensorFixtureDef = new b2FixtureDef;
+    bodyDef = new b2BodyDef;
+    bodyDef.type = b2Body.b2_staticBody;
+    bodyDef.position.x = 300 / SCALE;
+    bodyDef.position.y = 250 / SCALE;
     fixDef.shape = new b2PolygonShape;
-    fixDef.density = 1;
-    fixDef.shape.SetAsOrientedBox(0.1, 0.1, new b2Vec2(0, .3), 0);
-    fixDef.isSensor = true;
-    player.footSensorFixture = player.CreateFixture(fixDef);
-    player.footSensorFixture.SetUserData(3);
-    player.numFootContacts = 0;
-
+    fixDef.shape.SetAsBox((200 / SCALE) / 2, (10 / SCALE) / 2);
+    world.CreateBody(bodyDef).CreateFixture(fixDef);
 
 
     //setup debug draw
@@ -117,9 +111,9 @@ $(function() {
             leftArrow = true;
             moveState = -1;
             break;
-            // case 38:
-            //     upArrow = !upArrow;
-            //     break;
+        case 38:
+            upArrow = true;
+            break;
         default:
             break;
         }
@@ -145,165 +139,51 @@ $(function() {
             leftArrow = false;
             moveState = 0;
             break;
-            // case 38:
-            //     upArrow = !upArrow;
-            //     break;
+        case 38:
+            upArrow = false;
+            break;
         default:
             break;
         }
     }
-    // downmap = {
-    //     "16": function() {
-    //         shiftButton = true;
-    //     },
-    //     "91": function() {
-    //         commandButton = true;
-    //     },
-    //     "32": function() {
-    //         spaceBar = true;
-    //         jump();
-    //     },
-    //     "39": function() {
-    //         rightArrow = true;
-    //         moveState = 1;
-    //     },
-    //     "37": function() {
-    //         leftArrow = true;
-    //         moveState = -1;
-    //     },
-    //     "38": function() {
-    //         upArrow = true;
-    //     }
-    // };
-    // upmap = {
-    //     "16": function() {
-    //         shiftButton = false;
-    //     },
-    //     "91": function() {
-    //         commandButton = false;
-    //     },
-    //     "32": function() {
-    //         spaceBar = false;
-    //     },
-    //     "39": function() {
-    //         rightArrow = false;
-    //         moveState = 0;
-    //     },
-    //     "37": function() {
-    //         leftArrow = false;
-    //         moveState = 0;
-    //     },
-    //     "38": function() {
-    //         upArrow = false;
-    //     }
-    // };
-    // function route(e) {
-    //     // e.stop()
-    //     // console.log(e.keyCode)
-    //     var fxn = (e.type == "keydown") ? downmap[e.keyCode + ""] : upmap[e.keyCode + ""]
-    //     if (fxn) {
-    //         fxn();
-    //     }
-    // }
 
-    function jump() {
-        degrees = 90
-        power = 35
-        // console.log(player.fixture.GetRestitution())
-        yV = player.GetLinearVelocity().y
-        if (yV < 1 && yV > -1) {
-            player.fixture.SetRestitution(0.3)
-            player.ApplyImpulse(new b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power, Math.sin(degrees * (Math.PI / 180)) * power), player.GetWorldCenter());
-            setTimeout(function() {
-                player.fixture.SetRestitution(0)
-            }, 20)
-        }
-    }
+    function update() {
+        world.Step(
+        1 / 60, //frame-rate
+        10, //velocity iterations
+        10 //position iterations
+        );
+        world.DrawDebugData();
+        world.ClearForces();
+        player.SetAngle(0);
+        // movement
+        // vel = player.GetLinearVelocity();
+        // desiredVel = 0;
+        // if (rightArrow) desiredVel = Math.min(vel.x + 1.5, 6)
+        // if (leftArrow) desiredVel = Math.max(vel.x - 1.5, -6)
+        // console.log("desiredVel", desiredVel, vel.x /*, moveState, vel.x, rightArrow, leftArrow*/ )
+        // if (desiredVel) {
+        //     velChange = desiredVel - vel.x;
+        //     impulse = player.GetMass() * velChange; //disregard time factor
+        //     player.ApplyImpulse(new b2Vec2(impulse, 0), player.GetWorldCenter());
+        // }
 
-    var FootSensorContactListener = new Box2D.Dynamics.b2ContactListener();
-    FootSensorContactListener.BeginContact = function(contact) {
-        //check if fixture A was the foot sensor
-        var fixtureUserData = contact.GetFixtureA().GetUserData();
-        if (fixtureUserData == 3) numFootContacts++;
-        //check if fixture B was the foot sensor
-        fixtureUserData = contact.GetFixtureB().GetUserData();
-        if (fixtureUserData == 3) numFootContacts++;
-    }
+        if (rightArrow) player.move(1)
+        if (leftArrow) player.move(-1)
+        // console.log("inertia", player.GetMass())
+        console.log(player.numHeadContacts)
+        if (upArrow && player.numHeadContacts && !player.numLeftContacts && !player.numRightContacts) player.hang()
+        else {player.isHanging = false;}
+        if (spaceBar && player.numFootContacts || player.jumpNextFrame) player.jump(90)
+        // console.log("player.wasHanging",player.wasHanging, player.isHanging)
+        if (upArrow && spaceBar && !player.isHanging && player.wasHanging && !player.numHeadContacts) player.jumpNextFrame = true;
+        if(!player.numHeadContacts) {player.wasHanging = false;}
 
-    FootSensorContactListener.EndContact = function(contact) {
-        //check if fixture A was the foot sensor
-        var fixtureUserData = contact.GetFixtureA().GetUserData();
-        if (fixtureUserData == 3) numFootContacts--;
-        //check if fixture B was the foot sensor
-        fixtureUserData = contact.GetFixtureB().GetUserData();
-        if (fixtureUserData == 3) numFootContacts--;
-    }
-    world.SetContactListener(FootSensorContactListener)
-// var movingPower = 2
-// function moveRight() {
-//     degrees = 0
-//     // player.fixture.SetRestitution(0.3)
-//     // player.ApplyImpulse(new Box2D.Common.Math.b2Vec2(Math.cos(degrees * (Math.PI / 180)) * movingPower, Math.sin(degrees * (Math.PI / 180)) * movingPower), player.GetWorldCenter());
-//     player.SetLinearVelocity({
-//         x: 10,
-//         y: player.GetLinearVelocity().y
-//     })
-//     console.log("linearVX", player.GetLinearVelocity().x)
-//     // setTimeout(function() {
-//     //     player.fixture.SetRestitution(0)
-//     // }, 20)
-// }
-// function moveLeft() {
-//     degrees = 180
-//     // player.fixture.SetRestitution(0.3)
-//     // player.ApplyImpulse(new Box2D.Common.Math.b2Vec2(Math.cos(degrees * (Math.PI / 180)) * movingPower, Math.sin(degrees * (Math.PI / 180)) * movingPower), player.GetWorldCenter());
-//     player.SetLinearVelocity({
-//         x: -10,
-//         y: player.GetLinearVelocity().y
-//     })
-//     // setTimeout(function() {
-//     //     player.fixture.SetRestitution(0)
-//     // }, 20)
-// }
-
-function update() {
-    world.Step(
-    1 / 60, //frame-rate
-    10, //velocity iterations
-    10 //position iterations
-    );
-    world.DrawDebugData();
-    world.ClearForces();
-
-    // movement
-    vel = player.GetLinearVelocity();
-    desiredVel = 0;
-    // console.log(moveState)
-    // switch (moveState) {
-    // case -1:
-    //     desiredVel = -5//Math.max(vel.x - 0.1, -5);
-    //     break;
-    // case 1:
-    //     desiredVel = 5//Math.min(vel.x + 0.1, 5);
-    //     break;
-    // default:
-    //     break;
-    // }
-// console.log("Can I jump here?", numFootContacts);
-
-    if (rightArrow) desiredVel = 6 //Math.min(vel.x + 1, 6)
-    if (leftArrow) desiredVel = -6 //Math.max(vel.x - 1, -6)
-    // console.log("desiredVel", desiredVel/*, moveState, vel.x, rightArrow, leftArrow*/)
-    if (desiredVel) {
-        velChange = desiredVel - vel.x;
-        impulse = player.GetMass() * velChange; //disregard time factor
-        player.ApplyImpulse(new b2Vec2(impulse, 0), player.GetWorldCenter());
-    }
-    if (spaceBar && numFootContacts) jump()
-
+        // else if(spaceBar && player.wasHanging && !player.numHeadContacts)
+            // player.jump(-90)
+        requestAnimFrame(update);
+    } // update()
     requestAnimFrame(update);
-} // update()
-requestAnimFrame(update);
 
 
 
