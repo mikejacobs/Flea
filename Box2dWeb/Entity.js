@@ -1,5 +1,6 @@
-function Entity(options) {
-  console.log(options)
+var Entity = function(){};
+
+Entity.prototype.init = function(options) {
     this.id = options.id;
     this.type = options.type;
     this.x = options.x;
@@ -65,11 +66,10 @@ Entity.build = function(options) {
     // } else {
     //     return new RectangleEntity(def.id, def.x, def.y, def.angle, NULL_CENTER, def.color, def.strength, def.halfWidth, def.halfHeight);
     // }
-    console.log("making object", options.type)
 
     switch (options.type) {
     case "platform":
-        console.log("making platfom")
+        options.dynamic = false;
         return new RectangleEntity(options);
         break;
     default:
@@ -79,10 +79,13 @@ Entity.build = function(options) {
 
 function CircleEntity(options) {
     color = options.color || 'aqua';
-    Entity.call(options);
+    // Entity.prototype.init.call(options);
+    this.init(options)
     this.radius = options.radius;
 }
+
 CircleEntity.prototype = new Entity();
+
 CircleEntity.prototype.constructor = CircleEntity;
 
 CircleEntity.prototype.draw = function(ctx) {
@@ -107,7 +110,8 @@ CircleEntity.prototype.draw = function(ctx) {
 }
 
 function RectangleEntity(options) {
-    Entity.call(options);
+    // Entity.prototype.init.call(options);
+    this.init(options)
     this.halfWidth = options.halfWidth;
     this.halfHeight = options.halfHeight;
 }
@@ -127,7 +131,8 @@ RectangleEntity.prototype.draw = function(ctx) {
 }
 
 function PolygonEntity(options) {
-    Entity.call(options);
+    // Entity.prototype.init.call(options);
+    this.init(options)
     this.polys = options.polys;
 }
 PolygonEntity.prototype = new Entity();

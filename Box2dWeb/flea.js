@@ -192,7 +192,6 @@
 
 // })
 
-    console.log("asdfasdfadf")
 
 
 
@@ -228,7 +227,6 @@ var canvasWidth = ctx.canvas.width;
 var canvasHeight = ctx.canvas.height;
 
 function draw() {
-    //console.log("d");
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     for (var id in world) {
         var entity = world[id];
@@ -249,13 +247,14 @@ var initialState = [{
 //     x: 2,
 //     y: ctx.canvas.height / SCALE - 2,
 //     radius: 0.5
-// }, {
-//     id: "b1",
-//     x: 17,
-//     y: ctx.canvas.height / SCALE - 1,
-//     halfHeight: 2,
-//     halfWidth: 0.10,
-//     strength: 25
+}, {
+    id: "b1",
+    x: 17,
+    type: "platform",
+    y: 17,
+    halfHeight: .5,
+    halfWidth: 5,
+    strength: 25
 // }, {
 //     id: "b2",
 //     x: 17,
@@ -268,10 +267,10 @@ var initialState = [{
 var running = true;
 
 function init() {
-    console.log("omnot")
     for (var i = 0; i < initialState.length; i++) {
         world[initialState[i].id] = Entity.build(initialState[i]);
     }
+    player = new Player();
     game = new Game(60, false, canvasWidth, canvasHeight, SCALE);
     game.setBodies(world);
 
@@ -300,7 +299,6 @@ function init() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("loaded")
     init();
 
     (function loop(animStart) {
