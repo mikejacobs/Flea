@@ -73,6 +73,7 @@ Entity.build = function(options) {
         return new RectangleEntity(options);
         break;
     default:
+        return new RectangleEntity(options);
         break;
     }
 }
@@ -84,7 +85,7 @@ function CircleEntity(options) {
     this.radius = options.radius;
 }
 
-CircleEntity.prototype = new Entity();
+CircleEntity.prototype = new Entity;
 
 CircleEntity.prototype.constructor = CircleEntity;
 
@@ -115,7 +116,7 @@ function RectangleEntity(options) {
     this.halfWidth = options.halfWidth;
     this.halfHeight = options.halfHeight;
 }
-RectangleEntity.prototype = new Entity();
+RectangleEntity.prototype = new Entity;
 RectangleEntity.prototype.constructor = RectangleEntity;
 
 RectangleEntity.prototype.draw = function(ctx) {
@@ -135,7 +136,7 @@ function PolygonEntity(options) {
     this.init(options)
     this.polys = options.polys;
 }
-PolygonEntity.prototype = new Entity();
+PolygonEntity.prototype = new Entity;
 PolygonEntity.prototype.constructor = PolygonEntity;
 
 PolygonEntity.prototype.draw = function(ctx) {
