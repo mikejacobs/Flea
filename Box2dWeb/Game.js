@@ -32,8 +32,8 @@ function Game(intervalRate, adaptive, width, height, scale) {
 
     this.fixDef = new b2FixtureDef;
     this.fixDef.density = 1.0;
-    this.fixDef.friction = 0.5;
-    this.fixDef.restitution = 0.2;
+    this.fixDef.friction = 0.8;
+    this.fixDef.restitution = 0;
 }
 
 // Game.prototype.buildGround = function() {
@@ -67,6 +67,10 @@ Game.prototype.update = function() {
 
 Game.prototype.getState = function() {
     var state = {};
+    // if(once)
+    //     console.log("body list", this.world.GetBodyList())
+    // else
+    //     once = false;
     for (var b = this.world.GetBodyList(); b; b = b.m_next) {
         if (b.IsActive() && typeof b.GetUserData() !== 'undefined' && b.GetUserData() != null) {
             state[b.GetUserData()] = this.getBodySpec(b);
@@ -97,6 +101,7 @@ Game.prototype.setBodies = function(bodyEntities) {
 
         bodyDef.position.x = entity.x;
         bodyDef.position.y = entity.y;
+        if(entity.type == "player") console.log("entity.x", entity.x, entity.dynamic)
         bodyDef.userData = entity.id;
         bodyDef.angle = entity.angle;
         var body = this.registerBody(bodyDef);
@@ -124,7 +129,7 @@ Game.prototype.setBodies = function(bodyEntities) {
             if (entity.id == "player") {
                 //setup sensors
                 player.body = body;
-                console.log("making player")
+                console.log("making player in game.js")
                 this.setupPlayer(player)
             }
         }
@@ -170,7 +175,7 @@ Game.prototype.addContactListener = function(callbacks) {
     this.world.SetContactListener(listener);
 }
 
-Game.prototype.setupPlayer = function(body) {
+Game.prototype.setupPlayer = function(entity) {
     var fixDef = new b2FixtureDef;
     fixDef.shape = new b2PolygonShape;
     fixDef.density = 0;
@@ -244,45 +249,9 @@ Game.prototype.setupPlayer = function(body) {
     this.world.SetContactListener(SensorContactListener)
 
     //player fxns
-    player.jump = function(degrees) {
-        // degrees = 90
-        power = 20
-        // console.log("jump", degrees, Math.sin(degrees * (Math.PI / 180)) * power, this.wasHanging)
-        if (player.jumpNextFrame) {
-            // power = 50
-            power = 6
-            degrees = -90
-            player.jumpNextFrame = false;
-            // console.log("jumped next frame")
-            player.body.ApplyImpulse(new b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power, Math.sin(degrees * (Math.PI / 180)) * power), player.body.GetWorldCenter());
-        }
-        yV = player.body.GetLinearVelocity().y
-        if (yV < 1 && yV > -1) {
-            // console.log("jummmpin")
-            player.body.fixture.SetRestitution(0.3)
-            player.body.ApplyImpulse(new b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power, Math.sin(degrees * (Math.PI / 180)) * power), player.body.GetWorldCenter());
-            setTimeout(function() {
-                player.body.fixture.SetRestitution(0)
-            }, 20)
-        }
-    }
-    player.hang = function() {
-        // console.log("hanging", player.numHeadContacts)
-        this.isHanging = true;
-        if (!this.wasHanging) {
-            this.wasHanging = true;
-            // console.log("wasnothanging", world)
-            player.body.ApplyImpulse(new b2Vec2(0, this.body.GetMass() * game.world.GetGravity().y * -1), player.body.GetWorldCenter())
-        } else {
-            player.body.ApplyForce(new b2Vec2(0, this.body.GetMass() * game.world.GetGravity().y * -2), player.body.GetWorldCenter())
-        }
-    }
-    player.move = function(dir) {
-        vel = player.body.GetLinearVelocity();
-        vel.x = 6 * dir
-        player.body.SetAwake(true);
-        player.body.SetLinearVelocity(vel);
-    }
+
+        // if(entity.type == "player") console.log("setting up player", player)
+
 }
 
 Game.prototype.removeBody = function(id) {

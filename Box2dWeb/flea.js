@@ -177,7 +177,7 @@ window.requestAnimFrame = (function() {
 var world = {};
 var bodiesState = null;
 var game = null;
-
+var once = true;
 function update(animStart) {
     game.update();
     bodiesState = game.getState();
@@ -215,6 +215,7 @@ function draw() {
 var initialState = [{
     id: "ground",
     type: "platform",
+    dynamic:false,
     x: ctx.canvas.width / 2 / SCALE,
     y: ctx.canvas.height / SCALE,
     halfHeight: 0.5,
@@ -222,24 +223,20 @@ var initialState = [{
     color: 'yellow'
 }, {
     id: "player",
-    type: "rect",
+    type: "player",
     dynamic: true,
     color: "blue",
     x: 10,
     y: 7,
-    halfHeight: .3,
-    halfWidth: .3,
+    halfHeight: 5/SCALE,
+    halfWidth: 5/SCALE,
     strength: 25
-    // }, {
-    //     id: "ball",
-    //     x: 2,
-    //     y: ctx.canvas.height / SCALE - 2,
-    //     radius: 0.5
 }, {
     id: "b1",
     x: 17,
     type: "platform",
     y: 17,
+    dynamic:false,
     halfHeight: .5,
     halfWidth: 5,
     strength: 25
@@ -258,8 +255,9 @@ function init() {
     for (var i = 0; i < initialState.length; i++) {
         // console.log("initial state ud", initialState[i].id)
         world[initialState[i].id] = Entity.build(initialState[i]);
-        if(initialState[i].id == "player") player = initialState[i]
+        if(initialState[i].id == "player") player = world[initialState[i].id]
     }
+    // console.log("world", world)
     // player = new Player({
     //     id: "player",
     //     type: "player",
@@ -355,7 +353,7 @@ function init() {
             break;
         }
     }
-
+var looppp = 0
 document.addEventListener("DOMContentLoaded", function() {
     init();
 
@@ -365,16 +363,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         player.body.SetAngle(0);
         // movement
-        // vel = player.GetLinearVelocity();
-        // desiredVel = 0;
-        // if (rightArrow) desiredVel = Math.min(vel.x + 1.5, 6)
-        // if (leftArrow) desiredVel = Math.max(vel.x - 1.5, -6)
-        // console.log("desiredVel", desiredVel, vel.x /*, moveState, vel.x, rightArrow, leftArrow*/ )
-        // if (desiredVel) {
-        //     velChange = desiredVel - vel.x;
-        //     impulse = player.GetMass() * velChange; //disregard time factor
-        //     player.ApplyImpulse(new b2Vec2(impulse, 0), player.GetWorldCenter());
-        // }
         if (rightArrow) player.move(1)
         if (leftArrow) player.move(-1)
         // console.log("inertia", player.GetMass())
