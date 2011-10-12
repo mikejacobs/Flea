@@ -35,24 +35,6 @@ function Game(intervalRate, adaptive, width, height, scale) {
     this.fixDef.friction = 0.8;
     this.fixDef.restitution = 0;
 }
-
-// Game.prototype.buildGround = function() {
-//   //create ground
-//   var bodyDef = new b2BodyDef;
-//   bodyDef.type = b2Body.b2_staticBody;
-// 
-//   // positions the center of the object (not upper left!)
-//   bodyDef.position.x = this.width / 2 / this.scale;
-//   bodyDef.position.y = this.height / 2 / this.scale;
-//   bodyDef.angle = (45*Math.PI) / 180; // radians
-//   bodyDef.userData = '__BODY__';
-// 
-//   this.fixDef.shape = new b2PolygonShape;
-// 
-//   // half width, half height. eg actual height here is 1 unit
-//   this.fixDef.shape.SetAsBox((this.width-(this.width*0.1) / this.scale) / 2, (10/this.scale) / 2);
-//   this.registerBody(bodyDef).CreateFixture(this.fixDef);
-// }
 Game.prototype.update = function() {
     var start = Date.now();
     var stepRate = (this.adaptive) ? (now - this.lastTimestamp) / 1000 : (1 / this.intervalRate);
@@ -197,7 +179,7 @@ Game.prototype.setupPlayer = function(entity) {
     //left sensor on player.body
     fixDef.shape = new b2PolygonShape;
     fixDef.density = 0;
-    fixDef.shape.SetAsOrientedBox((1 / SCALE), (8 / SCALE), new b2Vec2(-.4, 0), 0);
+    fixDef.shape.SetAsOrientedBox((1 / SCALE), (5 / SCALE), new b2Vec2(-.4, 0), 0);
     fixDef.isSensor = true;
     player.leftSensorFixture = player.body.CreateFixture(fixDef);
     player.leftSensorFixture.SetUserData(5);
@@ -206,7 +188,7 @@ Game.prototype.setupPlayer = function(entity) {
     //right sensor on player.body
     fixDef.shape = new b2PolygonShape;
     fixDef.density = 0;
-    fixDef.shape.SetAsOrientedBox((1 / SCALE), (8 / SCALE), new b2Vec2(.4, 0), 0);
+    fixDef.shape.SetAsOrientedBox((1 / SCALE), (5 / SCALE), new b2Vec2(.4, 0), 0);
     fixDef.isSensor = true;
     player.rightSensorFixture = player.body.CreateFixture(fixDef);
     player.rightSensorFixture.SetUserData(6);
@@ -247,11 +229,6 @@ Game.prototype.setupPlayer = function(entity) {
         if (fixtureUserData == 6) player.numRightContacts--;
     }
     this.world.SetContactListener(SensorContactListener)
-
-    //player fxns
-
-        // if(entity.type == "player") console.log("setting up player", player)
-
 }
 
 Game.prototype.removeBody = function(id) {

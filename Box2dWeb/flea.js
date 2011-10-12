@@ -218,7 +218,7 @@ var initialState = [{
     dynamic:false,
     x: ctx.canvas.width / 2 / SCALE,
     y: ctx.canvas.height / SCALE,
-    halfHeight: 0.5,
+    halfHeight: 5/SCALE,
     halfWidth: ctx.canvas.width / SCALE,
     color: 'yellow'
 }, {
@@ -226,27 +226,38 @@ var initialState = [{
     type: "player",
     dynamic: true,
     color: "blue",
-    x: 10,
+    x: 1,
     y: 7,
-    halfHeight: 5/SCALE,
-    halfWidth: 5/SCALE,
+    halfHeight: 5 / SCALE,
+    halfWidth: 5 / SCALE,
     strength: 25
 }, {
     id: "b1",
-    x: 17,
+    x: 10,
     type: "platform",
     y: 17,
     dynamic:false,
-    halfHeight: .5,
-    halfWidth: 5,
+    halfHeight: 5/SCALE,
+    halfWidth: 20/SCALE,
     strength: 25
-    // }, {
-    //     id: "b2",
-    //     x: 17,
-    //     y: ctx.canvas.height / SCALE - 5,
-    //     halfHeight: 0.25,
-    //     halfWidth: 2,
-    //     strength: 30
+}, {
+    id: "rightWall",
+    type: "platform",
+    dynamic:false,
+    x: ctx.canvas.width/ SCALE + 5/SCALE,
+    y: 0,
+    halfHeight: ctx.canvas.width / SCALE,
+    halfWidth: 5 / SCALE,
+    color: 'white'
+}, {
+    id: "leftWall",
+    type: "platform",
+    dynamic:false,
+    x: -5/SCALE,
+    y: 0,
+    halfHeight: ctx.canvas.width / SCALE,
+    halfWidth: 5 / SCALE,
+    color: 'white'
 }];
 
 var running = true;
