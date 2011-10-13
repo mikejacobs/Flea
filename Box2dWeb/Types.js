@@ -27,8 +27,11 @@ SideHoldEntity.prototype.hit = function(impulse, source) {
     //         this.dead = true
     //     }
     // }
-    if(source.type == "player")
-        player.hang()
+    if(source.type == "player"){
+                // player.hang()
+                if(player.numRightContacts || player.numLeftContacts) player.onSidehold = true;
+                // console.log("sidehold")
+    }
 
     //console.log(this.id + ", " + impulse + ", " + source.id + ", " + this.strength);
 }

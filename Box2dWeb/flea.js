@@ -173,27 +173,8 @@ document.addEventListener("DOMContentLoaded", function() {
         update(animStart);
         draw();
         // console.log(player.body.GetLinearVelocity().x)
-        player.body.SetAngle(0);
-        // movement
-        if (rightArrow) player.move(1)
-        else if (leftArrow) player.move(-1)
-        else game.frictionOn(true)
-        // console.log("inertia", player.GetMass())
-        // console.log(upArrow, player.isHanging, player.wasHanging, player.numHeadContacts)
-        if (upArrow && player.numHeadContacts && !player.numLeftContacts && !player.numRightContacts) player.hang()
-        else {
-            player.isHanging = false;
-        }
-        if (upArrow && (player.numRightContacts || player.numLeftContacts) && player.isHanging) player.hang()
-        if (upArrow && spaceBar && (player.numRightContacts || player.numLeftContacts) && !player.numHeadContacts ) player.jump(90)
-        if (spaceBar && player.numFootContacts || player.jumpNextFrame) player.jump(90)
-        // console.log("player.wasHanging",player.wasHanging, player.isHanging)
-        if (upArrow && spaceBar && !player.isHanging && player.wasHanging && !player.numHeadContacts) player.jumpNextFrame = true;
-        if (!player.numHeadContacts) {
-            player.wasHanging = false;
-        }
-        if(!shiftButton)
-            requestAnimFrame(loop);
+        player.step()
+        if(!shiftButton) requestAnimFrame(loop);
 
         // else if(spaceBar && player.wasHanging && !player.numHeadContacts)
         // player.jump(-90)

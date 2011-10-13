@@ -31,7 +31,8 @@ Entity.prototype.hit = function(impulse, source) {
 
 Entity.prototype.getColor = function() {
     if (this.isHit) {
-        return 'black';
+        // return 'black';
+        return this.color;
     } else {
         return this.color;
     }

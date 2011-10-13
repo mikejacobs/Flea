@@ -242,7 +242,7 @@ Game.prototype.removeBody = function(id) {
     this.world.DestroyBody(this.bodiesMap[id]);
 }
 Game.prototype.frictionOn = function(on){
-    console.log(game.fixDef.friction, game)
+    // console.log(game.fixDef.friction, game)
     var friction = (on)?.7:0;
     for (b = game.world.GetBodyList(); b; b = b.m_next) {
         // console.log(b.fixture)
