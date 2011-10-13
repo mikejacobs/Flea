@@ -3,6 +3,7 @@ var drawFixtures = false;
 function PlayerEntity(options) {
     // Entity.prototype.init.call(options);
     this.init(options)
+    this.maxVel = 15
     this.halfWidth = options.halfWidth;
     this.halfHeight = options.halfHeight;
 }
@@ -43,8 +44,9 @@ PlayerEntity.prototype.draw = function(ctx) {
 
         // drawFixtures = false;
     }
-
+    this.onPlatform = false;
     Entity.prototype.draw.call(this, ctx);
+
 }
 PlayerEntity.prototype.update = function(state) {
     this.x = state.x;
@@ -73,11 +75,11 @@ PlayerEntity.prototype.step = function() {
 }
 PlayerEntity.prototype.jump = function(degrees) {
     // degrees = 90
-    power = 3
+    power = 2.5
     // console.log("jump", degrees, Math.sin(degrees * (Math.PI / 180)) * power, this.wasHanging)
     if (this.jumpNextFrame) {
         // power = 50
-        power = 3
+        power = 2.5
         degrees = -90
         this.jumpNextFrame = false;
         // console.log("jumped next frame")
@@ -98,21 +100,23 @@ PlayerEntity.prototype.hang = function() {
     // console.log("hanging", player.numHeadContacts)
     this.isHanging = true;
     power = this.body.GetMass() * game.world.GetGravity().y * -1
-    if (!this.wasHanging) {
+    if (!this.wasHanging && this.numHeadContacts) {
         this.wasHanging = true;
         // console.log("wasnothanging", this.body.GetMass())
         this.body.ApplyImpulse(new b2Vec2(0, power * .15), player.body.GetWorldCenter())
     } else {
         // game.world.ClearForces()
         // console.log("is hanging", this.body.GetMass(), game.world.GetGravity().y, this.body.GetMass() * game.world.GetGravity().y * -5)
-        this.body.ApplyForce(new b2Vec2(0, power * 2), player.body.GetWorldCenter())
+        this.body.ApplyForce(new b2Vec2(0, power * 1), player.body.GetWorldCenter())
     }
 }
 PlayerEntity.prototype.move = function(dir) {
     vel = this.body.GetLinearVelocity();
     // if(Math.abs(vel.x) < 20 ) vel.x += .8 * dir
     // console.log("diff direction?", (vel.x/dir) < 0)
-    if(Math.abs(vel.x) < 20 || (vel.x/dir) < 0) this.body.ApplyForce(new b2Vec2(4.5 * dir, 0), player.body.GetWorldCenter())
+    game.frictionOn(false)
+    if((vel.x/dir) < 0) this.body.ApplyForce(new b2Vec2(18 * dir, 0), player.body.GetWorldCenter())
+    else if(Math.abs(vel.x) < 12) this.body.ApplyForce(new b2Vec2(4 * dir, 0), player.body.GetWorldCenter())
     // same -10 -1 
     // same 10 1 abs 10 * 1 1
     // diff -10 1 abs 10 * -1 

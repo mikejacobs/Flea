@@ -32,7 +32,7 @@ function Game(intervalRate, adaptive, width, height, scale) {
 
     this.fixDef = new b2FixtureDef;
     this.fixDef.density = 1.0;
-    this.fixDef.friction = 0.3;
+    this.fixDef.friction = 0.8;
     this.fixDef.restitution = 0;
 }
 Game.prototype.update = function() {
@@ -111,7 +111,7 @@ Game.prototype.setBodies = function(bodyEntities) {
             if (entity.id == "player") {
                 //setup sensors
                 player.body = body;
-                player.body.fixture.friction = .8
+                // player.body.fixture.density = .2
                 // console.log("making player in game.js")
                 this.setupPlayer(player)
             }
@@ -211,8 +211,6 @@ Game.prototype.setupPlayer = function(entity) {
         if (fixtureUserData == 4) player.numHeadContacts++;
         if (fixtureUserData == 5) player.numLeftContacts++;
         if (fixtureUserData == 6) player.numRightContacts++;
-
-
     }
 
     SensorContactListener.EndContact = function(contact) {
@@ -229,9 +227,25 @@ Game.prototype.setupPlayer = function(entity) {
         if (fixtureUserData == 5) player.numLeftContacts--;
         if (fixtureUserData == 6) player.numRightContacts--;
     }
+    SensorContactListener.PostSolve = function(contact, impulse){
+        impulse = impulse.normalImpulses[0]
+        // if(impulse < 0.1) return;
+        entityA = world[contact.GetFixtureA().GetBody().GetUserData()]
+        entityB = world[contact.GetFixtureB().GetBody().GetUserData()]
+        entityA.hit(impulse, entityB);
+        entityB.hit(impulse, entityA);
+    }
     this.world.SetContactListener(SensorContactListener)
 }
 
 Game.prototype.removeBody = function(id) {
     this.world.DestroyBody(this.bodiesMap[id]);
+}
+Game.prototype.frictionOn = function(on){
+    console.log(game.fixDef.friction, game)
+    var friction = (on)?.7:0;
+    for (b = game.world.GetBodyList(); b; b = b.m_next) {
+        // console.log(b.fixture)
+        if(b.fixture) b.fixture.SetFriction(friction);
+    }
 }

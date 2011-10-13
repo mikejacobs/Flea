@@ -18,12 +18,13 @@ Entity.prototype.init = function(options) {
 
 Entity.prototype.hit = function(impulse, source) {
     this.isHit = true;
-    if (this.strength) {
-        this.strength -= impulse;
-        if (this.strength <= 0) {
-            this.dead = true
-        }
-    }
+    // console.log("hit", this)
+    // if (this.strength) {
+    //     this.strength -= impulse;
+    //     if (this.strength <= 0) {
+    //         this.dead = true
+    //     }
+    // }
 
     //console.log(this.id + ", " + impulse + ", " + source.id + ", " + this.strength);
 }
@@ -60,13 +61,6 @@ Entity.prototype.draw = function(ctx) {
 }
 
 Entity.build = function(options) {
-    // if (def.radius) {
-    //     return new CircleEntity(def.id, def.x, def.y, def.angle, NULL_CENTER, def.color, def.strength, def.radius);
-    // } else if (def.polys) {
-    //     return new PolygonEntity(def.id, def.x, def.y, def.angle, NULL_CENTER, def.color, def.strength, def.polys);
-    // } else {
-    //     return new RectangleEntity(def.id, def.x, def.y, def.angle, NULL_CENTER, def.color, def.strength, def.halfWidth, def.halfHeight);
-    // }
     switch (options.type) {
     case "platform":
         options.dynamic = false;
@@ -83,7 +77,7 @@ Entity.build = function(options) {
         return new SideHoldEntity(options);
         break;
     default:
-        return new RectangleEntity(options);
+        return new PlatformEntity(options);
         break;
     }
 }

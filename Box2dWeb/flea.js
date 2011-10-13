@@ -176,7 +176,8 @@ document.addEventListener("DOMContentLoaded", function() {
         player.body.SetAngle(0);
         // movement
         if (rightArrow) player.move(1)
-        if (leftArrow) player.move(-1)
+        else if (leftArrow) player.move(-1)
+        else game.frictionOn(true)
         // console.log("inertia", player.GetMass())
         // console.log(upArrow, player.isHanging, player.wasHanging, player.numHeadContacts)
         if (upArrow && player.numHeadContacts && !player.numLeftContacts && !player.numRightContacts) player.hang()
@@ -184,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function() {
             player.isHanging = false;
         }
         if (upArrow && (player.numRightContacts || player.numLeftContacts) && player.isHanging) player.hang()
-        if (spaceBar && (player.numRightContacts || player.numLeftContacts) && !player.numHeadContacts ) player.jump(90)
+        if (upArrow && spaceBar && (player.numRightContacts || player.numLeftContacts) && !player.numHeadContacts ) player.jump(90)
         if (spaceBar && player.numFootContacts || player.jumpNextFrame) player.jump(90)
         // console.log("player.wasHanging",player.wasHanging, player.isHanging)
         if (upArrow && spaceBar && !player.isHanging && player.wasHanging && !player.numHeadContacts) player.jumpNextFrame = true;
