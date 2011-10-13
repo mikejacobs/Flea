@@ -75,7 +75,12 @@ Entity.build = function(options) {
     case "player":
         options.dynamic = true;
         // return new Player(options);
-        return new Player(options);
+        return new PlayerEntity(options);
+        break;
+    case "sidehold":
+        options.dynamic = false;
+        // return new Player(options);
+        return new SideHoldEntity(options);
         break;
     default:
         return new RectangleEntity(options);

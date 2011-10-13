@@ -32,7 +32,7 @@ function Game(intervalRate, adaptive, width, height, scale) {
 
     this.fixDef = new b2FixtureDef;
     this.fixDef.density = 1.0;
-    this.fixDef.friction = 0.8;
+    this.fixDef.friction = 0.3;
     this.fixDef.restitution = 0;
 }
 Game.prototype.update = function() {
@@ -83,7 +83,7 @@ Game.prototype.setBodies = function(bodyEntities) {
 
         bodyDef.position.x = entity.x;
         bodyDef.position.y = entity.y;
-        if(entity.type == "player") console.log("entity.x", entity.x, entity.dynamic)
+        // if(entity.type == "player") console.log("entity.x", entity.x, entity.dynamic)
         bodyDef.userData = entity.id;
         bodyDef.angle = entity.angle;
         var body = this.registerBody(bodyDef);
@@ -111,7 +111,8 @@ Game.prototype.setBodies = function(bodyEntities) {
             if (entity.id == "player") {
                 //setup sensors
                 player.body = body;
-                console.log("making player in game.js")
+                player.body.fixture.friction = .8
+                // console.log("making player in game.js")
                 this.setupPlayer(player)
             }
         }
@@ -161,7 +162,7 @@ Game.prototype.setupPlayer = function(entity) {
     var fixDef = new b2FixtureDef;
     fixDef.shape = new b2PolygonShape;
     fixDef.density = 0;
-    fixDef.shape.SetAsOrientedBox((5 / SCALE), (1 / SCALE), new b2Vec2(0, .4), 0);
+    fixDef.shape.SetAsOrientedBox(entity.halfWidth/2, entity.halfHeight/2, new b2Vec2(0, .2), 0);
     fixDef.isSensor = true;
     player.footSensorFixture = player.body.CreateFixture(fixDef);
     player.footSensorFixture.SetUserData(3);
@@ -170,7 +171,7 @@ Game.prototype.setupPlayer = function(entity) {
     //head sensor on player.body
     fixDef.shape = new b2PolygonShape;
     fixDef.density = 0;
-    fixDef.shape.SetAsOrientedBox((9 / SCALE), (1 / SCALE), new b2Vec2(0, -.4), 0);
+    fixDef.shape.SetAsOrientedBox(entity.halfWidth/2, entity.halfHeight/2, new b2Vec2(0, -.2), 0);
     fixDef.isSensor = true;
     player.headSensorFixture = player.body.CreateFixture(fixDef);
     player.headSensorFixture.SetUserData(4);
@@ -179,7 +180,7 @@ Game.prototype.setupPlayer = function(entity) {
     //left sensor on player.body
     fixDef.shape = new b2PolygonShape;
     fixDef.density = 0;
-    fixDef.shape.SetAsOrientedBox((1 / SCALE), (5 / SCALE), new b2Vec2(-.4, 0), 0);
+    fixDef.shape.SetAsOrientedBox(entity.halfWidth/2, entity.halfHeight/2, new b2Vec2(-.2, 0), 0);
     fixDef.isSensor = true;
     player.leftSensorFixture = player.body.CreateFixture(fixDef);
     player.leftSensorFixture.SetUserData(5);
@@ -188,7 +189,7 @@ Game.prototype.setupPlayer = function(entity) {
     //right sensor on player.body
     fixDef.shape = new b2PolygonShape;
     fixDef.density = 0;
-    fixDef.shape.SetAsOrientedBox((1 / SCALE), (5 / SCALE), new b2Vec2(.4, 0), 0);
+    fixDef.shape.SetAsOrientedBox(entity.halfWidth/2, entity.halfHeight/2, new b2Vec2(.2, 0), 0);
     fixDef.isSensor = true;
     player.rightSensorFixture = player.body.CreateFixture(fixDef);
     player.rightSensorFixture.SetUserData(6);
