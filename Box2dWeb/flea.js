@@ -1,3 +1,22 @@
+////////////////////////
+/*
+TODO:
+    *fix friction on under-platform hanging
+    *implement tile system
+        convert tiles to box2d scaling system (2/SCALE = 1 tile)
+    *make better hazard
+    *death animation
+        explosion?
+
+*/
+////////////////////////
+
+
+
+
+
+
+
 var commandButton, shiftButton, spaceBar, rightArrow, leftArrow, upArrow;
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 window.requestAnimFrame = (function() {
@@ -88,11 +107,19 @@ var initialState = [{
 }, {
     id: "leftWall",
     type: "platform",
-    x: -5/SCALE,
+    x: -5 / SCALE,
     y: 0,
     halfHeight: ctx.canvas.width / SCALE,
     halfWidth: 5 / SCALE,
     color: 'white'
+}, {
+    id: "haz1",
+    type: "hazard",
+    x: 13,
+    y: 17,
+    halfHeight: 5 / SCALE,
+    halfWidth: 50 / SCALE,
+    color: 'pink'
 }];
 
 var running = true;
