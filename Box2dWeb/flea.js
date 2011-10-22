@@ -192,7 +192,6 @@ function init() {
             break;
         }
     }
-var looppp = 0
 document.addEventListener("DOMContentLoaded", function() {
     init();
 

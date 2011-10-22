@@ -7,7 +7,10 @@ function PlayerEntity(options) {
     this.halfHeight = options.halfHeight;
 
     this.onEntity = false;
-    this.origin = {x:options.x, y:options.y}
+    this.origin = {
+        x: options.x,
+        y: options.y
+    }
     this.init(options)
 }
 PlayerEntity.prototype = new Entity;
@@ -56,13 +59,24 @@ PlayerEntity.prototype.update = function(state) {
     this.center = state.c;
     this.angle = state.a;
 }
-PlayerEntity.prototype.die = function(){
-    console.log("die!",this.body.GetPosition())
+PlayerEntity.prototype.die = function() {
+    console.log("die!", this.body.GetPosition())
     //death anim
-    // for(var i =0; i < 4; i++){
-    //     world[initialState[i].id] = Entity.build(initialState[i]);
-    //     // game.setBodies(world);
-    // }
+    playerPiece = {
+        id: "piece1",
+        type: "rectangle",
+        x: this.x,
+        y: this.y,
+        halfHeight: 2.5 / SCALE,
+        halfWidth: 2.5 / SCALE,
+        color: 'blue'
+    }
+    playerPiece1Entity = Entity.build(playerPiece);
+
+    playerPiece.x += 2.5 / SCALE
+    playerPiece.id = "piece2"
+    playerPiece2Entity = Entity.build(playerPiece);
+    game.setBodies([playerPiece1Entity, playerPiece2Entity]);
 
     this.body.SetPosition(new b2Vec2(this.origin.x, this.origin.y))
     this.reset()
@@ -72,7 +86,7 @@ PlayerEntity.prototype.step = function() {
     this.body.SetAngle(0);
 
     // movement
-    if(this.onEntity == "hazard"){
+    if (this.onEntity == "hazard") {
         this.die()
         return;
     }
