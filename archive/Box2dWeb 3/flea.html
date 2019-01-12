@@ -1,0 +1,48 @@
+<html>
+<head>
+   <title>Flea</title>
+   <style type="text/css">
+      body{
+         background-color:#ebebeb;
+         padding:0px;
+         margin:0px;
+      }
+      canvas{
+         position:absolute;
+         top:0px;
+         left:0px;
+         cursor:crosshair !important;
+      }
+      #canvas_container{
+         position:relative;
+         height:440px;
+      }
+      #materials{
+
+      }
+   </style>
+</head>
+<body>
+   <div id="canvas_container">
+      <canvas id="canvas" width="920" height="440" style="background-color:#ffffff;" ></canvas>
+      <canvas id="crosshair" width="920" height="440" style="background-color:transparent;" ></canvas>
+   </div>
+   <div id="materials">
+      <a class="active" href="#platform">Platform</a>
+      <a href="#sidehold">Sidehold</a>
+      <a href="#hazard">Spike</a>
+      <a href="#spring">Spring</a>
+      <a href="#star">Star</a>
+      <a href="#heart">Heart</a>
+      <!-- <a href="#player">Player</a> -->
+   </div>
+   <script src="../js/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script type="text/javascript" src="Box2dWeb-2.1.a.3.min.js"></script>
+   <script type="text/javascript" src="Game.js"></script>
+   <script type="text/javascript" src="Editor.js"></script>
+   <script type="text/javascript" src="flea.js"></script>
+   <script type="text/javascript" src="Entity.js"></script>
+   <script type="text/javascript" src="Player.js"></script>
+   <script type="text/javascript" src="Types.js"></script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+/Users/MJacobs/Documents/programming/Flea/Flea/Classes/ES1Renderer.m: In function '-[ES1Renderer render]':
+/Users/MJacobs/Documents/programming/Flea/Flea/Classes/ES1Renderer.m:42: warning: unused variable 'transY'
