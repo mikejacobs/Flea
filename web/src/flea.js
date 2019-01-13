@@ -11,10 +11,12 @@ TODO:
 ////////////////////////
 // Options
 var activeMapName = "basic";
+var canvasWidth = 1200;
+var canvasHeight = 600;
+var debugging = true;
 //
 
 var commandButton, shiftButton, spaceBar, rightArrow, leftArrow, upArrow;
-// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 
 var world = {};
 var bodiesState = null;
@@ -22,34 +24,29 @@ var game = null;
 var once = true;
 var tileSize = 10;
 
+var ctx;
+var canvasTileWidth = canvasWidth / tileSize;
+var canvasTileHeight = canvasHeight / tileSize;
+
 function update(animStart) {
   game.update();
   bodiesState = game.getState();
-
-  // var graveyard = [];
+  var graveyard = [];
   for (var id in bodiesState) {
     var entity = world[id];
-    // console.log("entity update", entity.type, entity.x)
-    //     if (entity && world[id].dead) {
-    //         game.removeBody(id);
-    //         graveyard.push(id);
-    //     } else
-    if (entity) {
+    // console.log("entity update", entity.type, entity.x);
+    if (entity && entity.toDelete) {
+      graveyard.push(id);
+    } else if (entity) {
       entity.update(bodiesState[id]);
     }
   }
 
-  // for (var i = 0; i < graveyard.length; i++) {
-  //     delete world[graveyard[i]];
-  // }
+  for (var i = 0; i < graveyard.length; i++) {
+    game.removeBody(world[graveyard[i]].id);
+    delete world[graveyard[i]];
+  }
 }
-
-var ctx = document.getElementById("canvas").getContext("2d");
-var canvasWidth = ctx.canvas.width;
-var canvasHeight = ctx.canvas.height;
-var canvasTileWidth = canvasWidth / tileSize;
-var canvasTileHeight = canvasHeight / tileSize;
-console.log(canvasWidth / SCALE, canvasHeight / SCALE);
 
 function draw() {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -60,8 +57,25 @@ function draw() {
 }
 
 var running = true;
+function createCanvas(id, parent) {
+  var canvas = $(
+    '<canvas id="' +
+      id +
+      '" width="' +
+      canvasWidth +
+      '" height="' +
+      canvasHeight +
+      '"/>'
+  );
+  canvas.appendTo($("#" + parent));
+  return canvas;
+}
 
 function init() {
+  ctx = createCanvas("canvas", "canvases")
+    .get(0)
+    .getContext("2d");
+
   var activeMap = maps[activeMapName];
   for (var i = 0; i < activeMap.length; i++) {
     // console.log("initial state ud", activeMap[i].id)
@@ -76,7 +90,7 @@ function init() {
   }
   game = new Game(60, false, canvasWidth, canvasHeight, SCALE);
   game.setBodies(world);
-  editor = new Editor(game);
+  editor = new Editor(game, createCanvas("crosshair", "canvases"));
 }
 
 $(window).keydown(routeDown);
@@ -90,6 +104,7 @@ function routeDown(e) {
       break;
     case 32:
       spaceBar = true;
+      return false;
       // jump()
       break;
     case 39:
@@ -99,6 +114,9 @@ function routeDown(e) {
     case 37:
       leftArrow = true;
       moveState = -1;
+      break;
+    case 224:
+      commandButton = true;
       break;
     case 38:
       upArrow = true;
@@ -114,11 +132,12 @@ function routeUp(e) {
     case 16:
       shiftButton = false;
       break;
-    // case 91:
-    //     commandButton = !commandButton;
-    //     break;
+    case 224:
+      commandButton = false;
+      break;
     case 32:
       spaceBar = false;
+      return false;
       break;
     case 39:
       rightArrow = false;
@@ -155,8 +174,8 @@ $(function() {
     update(animStart);
     draw();
     player.step();
-    //for debug
-    if (!shiftButton) requestAnimFrame(loop);
+    //debug pause
+    !(debugging && shiftButton && commandButton) && requestAnimFrame(loop);
   })();
 });
 tileToBox = function(value) {

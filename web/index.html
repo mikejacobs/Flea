@@ -1,4 +1,4 @@
-<html>
+<html charset="utf-8">
   <head>
     <title>Flea</title>
   </head>
@@ -6,7 +6,8 @@
     <div
       style="width: 1200px; height: 440px;margin:60px auto;position:relative;"
     >
-      <canvas
+      <div id="canvases"></div>
+      <!-- <canvas
         id="canvas"
         width="1200"
         height="440"
@@ -17,30 +18,62 @@
         width="1200"
         height="440"
         style="background-color:transparent; margin:0px auto;"
-      ></canvas>
+      ></canvas> -->
+      <div id="controls">
+        Controls
+        <ul id="block-type">
+          <li><a href="#" id="platform" class="active">Platform</a></li>
+          <li><a href="#" id="sidehold">Sidehold</a></li>
+          <li><a href="#" id="spring">Spring</a></li>
+        </ul>
+        <input id="block-color" type="text" placeholder="color" />
+      </div>
     </div>
-    <div>Controls</div>
   </body>
-  <script type="text/javascript" src="../../mjlib.js"></script>
-  <script src="../js/jquery.js" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" src="Box2dWeb-2.1.a.3.min.js"></script>
-  <script type="text/javascript" src="Game.js"></script>
-  <script type="text/javascript" src="Editor.js"></script>
-  <script type="text/javascript" src="flea.js"></script>
-  <script type="text/javascript" src="Maps.js"></script>
-  <script type="text/javascript" src="Entity.js"></script>
-  <script type="text/javascript" src="Player.js"></script>
-  <script type="text/javascript" src="Types.js"></script>
+  <script type="text/javascript" src="lib/jquery.js"></script>
+  <script type="text/javascript" src="lib/Box2dWeb-2.1.a.3.min.js"></script>
+  <script type="text/javascript" src="src/Game.js"></script>
+  <script type="text/javascript" src="src/Editor.js"></script>
+  <script type="text/javascript" src="src/flea.js"></script>
+  <script type="text/javascript" src="src/Maps.js"></script>
+  <script type="text/javascript" src="src/Entity.js"></script>
+  <script type="text/javascript" src="src/Player.js"></script>
+  <script type="text/javascript" src="src/Types.js"></script>
 
   <style type="text/css">
     body {
-      background-color: #000;
+      background-color: goldenrod;
+      font-family: Monaco;
     }
-    canvas {
+    #canvas {
+      background-color: #ffffff;
+      margin: 0px auto;
+    }
+    #crosshair {
       position: absolute;
       top: 0px;
       left: 0px;
       cursor: crosshair;
+      background-color: transparent;
+      margin: 0px auto;
+    }
+    #controls li,
+    #controls {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #controls li {
+      padding: 4px;
+      margin: 4px;
+    }
+    #controls a {
+      padding: 4px;
+      color: black;
+      text-decoration: none;
+    }
+    #controls a.active {
+      background: white;
     }
   </style>
 </html>
