@@ -1,16 +1,15 @@
 var maps = {
   basic: [
+    // {
+    //   id: "ground",
+    //   type: "platform",
+    //   x: 0,
+    //   y: 1,
+    //   height: 1,
+    //   width: canvasTileWidth,
+    //   color: "black"
+    // },
     {
-      id: "ground",
-      type: "platform",
-      x: 0,
-      y: 1,
-      height: 1,
-      width: canvasTileWidth,
-      color: "black"
-    },
-    {
-      id: "player",
       type: "player",
       color: "blue",
       x: 1,
@@ -20,7 +19,6 @@ var maps = {
       strength: 25
     },
     {
-      id: "b1",
       type: "platform",
       x: 1,
       y: 5,
@@ -28,7 +26,6 @@ var maps = {
       width: 5
     },
     {
-      id: "sh1",
       x: 10,
       type: "sidehold",
       y: 13,
@@ -37,7 +34,6 @@ var maps = {
       color: "green"
     },
     {
-      id: "rightWall",
       type: "platform",
       x: canvasTileWidth,
       y: canvasTileHeight,
@@ -46,7 +42,6 @@ var maps = {
       color: "white"
     },
     {
-      id: "leftWall",
       type: "platform",
       x: -1,
       y: canvasTileHeight,
@@ -55,7 +50,6 @@ var maps = {
       color: "green"
     },
     {
-      id: "haz1",
       type: "hazard",
       x: 13,
       y: 10,
@@ -64,7 +58,6 @@ var maps = {
       color: "pink"
     },
     {
-      id: "spring1",
       type: "spring",
       x: 1,
       y: 20,
@@ -74,3 +67,21 @@ var maps = {
     }
   ]
 };
+
+function giveBlockId(block) {
+  block.id = block.x + "_" + block.y;
+}
+
+for (map in maps) {
+  var m = maps[map];
+  m.map(giveBlockId);
+  m.push({
+    id: -canvasTileWidth + "_" + -100,
+    type: "hazard",
+    x: -canvasTileWidth,
+    y: -100,
+    height: 1,
+    width: canvasTileWidth * 3,
+    color: "black"
+  });
+}

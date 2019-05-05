@@ -1,8 +1,9 @@
-Editor = function(game, canvas) {
-  this.game = game;
+Editor = function(canvas) {
   this.crosshair = new Crosshair(this, canvas);
   this.activeBlock = "platform";
   $("#block-type li a").on("click", $.proxy(this.handleControl, this));
+  $("#export").on("click", $.proxy(this.export, this));
+  $("#import").on("click", $.proxy(this.import, this));
 };
 Editor.prototype.handleControl = function(e) {
   console.log("this.activeBlock", this.activeBlock);
@@ -21,18 +22,47 @@ Editor.prototype.draw = function(x1, x2, y1, y2) {
   if (shiftButton) {
     if (world[blockid]) world[blockid].toDelete = true;
   } else {
-    block = {
-      id: blockid,
-      type: this.activeBlock,
-      color: $("#block-color").val(),
-      x: blockx,
-      y: blocky,
-      halfWidth: tileSize / 2 / SCALE,
-      halfHeight: tileSize / 2 / SCALE
-    };
-    world[block.id] = Entity.build(block);
-    game.setBodies([world[block.id]]);
+    if (this.activeBlock == "player") {
+      player.origin.x = blockx;
+      player.origin.y = blocky;
+      player.die();
+      player.reset();
+    } else {
+      block = {
+        id: blockid,
+        type: this.activeBlock,
+        color: $("#block-color").val() || "lightgray",
+        x: blockx,
+        y: blocky,
+        halfWidth: tileSize / 2 / SCALE,
+        halfHeight: tileSize / 2 / SCALE
+      };
+
+      world[block.id] = Entity.build(block);
+      console.log("world[block.id]", world[block.id]);
+      game.setBodies([world[block.id]]);
+    }
+
+    if (this.activeBlock == "player") {
+      // player.step = function() {};
+      // player.dynamic = false;
+      // console.log("player", player);
+      // player.toDelete = true;
+      // player = world[block.id];
+    }
   }
+};
+Editor.prototype.export = function() {
+  var output = [];
+  for (var entity in world) {
+    output.push(world[entity].export());
+  }
+  console.log("export", output);
+  alert(JSON.stringify(output));
+};
+Editor.prototype.import = function() {
+  var newmap = prompt("Please enter your name", "Harry Potter");
+  loadMap(JSON.parse(newmap));
 };
 Crosshair = function(editor, canvas) {
   this.editor = editor;

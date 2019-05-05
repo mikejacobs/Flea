@@ -23,6 +23,7 @@ var bodiesState = null;
 var game = null;
 var once = true;
 var tileSize = 10;
+var running = true;
 
 var ctx;
 var canvasTileWidth = canvasWidth / tileSize;
@@ -36,6 +37,7 @@ function update(animStart) {
     var entity = world[id];
     // console.log("entity update", entity.type, entity.x);
     if (entity && entity.toDelete) {
+      console.log("removeing", entity);
       graveyard.push(id);
     } else if (entity) {
       entity.update(bodiesState[id]);
@@ -56,7 +58,6 @@ function draw() {
   }
 }
 
-var running = true;
 function createCanvas(id, parent) {
   var canvas = $(
     '<canvas id="' +
@@ -71,12 +72,13 @@ function createCanvas(id, parent) {
   return canvas;
 }
 
-function init() {
+function init(map) {
   ctx = createCanvas("canvas", "canvases")
     .get(0)
     .getContext("2d");
 
-  var activeMap = maps[activeMapName];
+  var activeMap = map || maps[activeMapName];
+  console.log("map", map);
   for (var i = 0; i < activeMap.length; i++) {
     // console.log("initial state ud", activeMap[i].id)
     var block = activeMap[i];
@@ -86,11 +88,22 @@ function init() {
     block.y = (canvasHeight - block.y * tileSize) / SCALE + block.halfHeight;
     // console.log("build entity: ", block.id, block.x, block.y)
     world[block.id] = Entity.build(block);
-    if (block.id == "player") player = world[block.id];
+    if (block.type == "player") player = world[block.id];
   }
   game = new Game(60, false, canvasWidth, canvasHeight, SCALE);
   game.setBodies(world);
-  editor = new Editor(game, createCanvas("crosshair", "canvases"));
+  editor = new Editor(createCanvas("crosshair", "canvases"));
+  running = true;
+}
+
+function loadMap(map) {
+  // todo: destroy canvases
+  running = false;
+  $("canvas").remove();
+  game = null;
+  editor = null;
+  world = {};
+  init(map);
 }
 
 $(window).keydown(routeDown);
@@ -175,7 +188,8 @@ $(function() {
     draw();
     player.step();
     //debug pause
-    !(debugging && shiftButton && commandButton) && requestAnimFrame(loop);
+    !((debugging && shiftButton && commandButton) || !running) &&
+      requestAnimFrame(loop);
   })();
 });
 tileToBox = function(value) {

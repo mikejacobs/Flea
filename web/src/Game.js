@@ -15,6 +15,7 @@ var NULL_CENTER = {
   x: null,
   y: null
 };
+var gameworld;
 
 function Game(intervalRate, adaptive, width, height, scale) {
   this.intervalRate = parseInt(intervalRate);
@@ -29,6 +30,7 @@ function Game(intervalRate, adaptive, width, height, scale) {
     new b2Vec2(0, 50), //gravity
     true //allow sleep
   );
+  gameworld = this.world;
 
   this.fixDef = new b2FixtureDef();
   this.fixDef.density = 1.0;
@@ -116,11 +118,12 @@ Game.prototype.setBodies = function(bodyEntities) {
       this.fixDef.shape = new b2PolygonShape();
       this.fixDef.shape.SetAsBox(entity.halfWidth, entity.halfHeight);
       body.fixture = body.CreateFixture(this.fixDef);
-      if (entity.id == "player") {
+      if (entity.type == "player") {
         //setup sensors
         player.body = body;
         // player.body.fixture.density = .2
         // console.log("making player in game.js")
+        console.log("setup player");
         this.setupPlayer(player);
       }
     }
@@ -130,8 +133,11 @@ Game.prototype.setBodies = function(bodyEntities) {
 
 Game.prototype.registerBody = function(bodyDef) {
   var body = this.world.CreateBody(bodyDef);
-  this.bodiesMap[body.GetUserData()] = body;
-  return body;
+  if (body) {
+    this.bodiesMap[body.GetUserData()] = body;
+    return body;
+  }
+  return;
 };
 
 Game.prototype.addRevoluteJoint = function(body1Id, body2Id, params) {
@@ -308,8 +314,21 @@ Game.prototype.setupPlayer = function(entity) {
           .GetBody()
           .GetUserData()
       ];
-    entityA.hit(impulse, entityB);
-    entityB.hit(impulse, entityA);
+    !entityB &&
+      console.log(
+        "entityB",
+        contact,
+        entityB,
+        contact
+          .GetFixtureB()
+          .GetBody()
+          .GetUserData(),
+        gameworld.GetBodyList()
+      );
+    if (entityB && entityA) {
+      entityA.hit(impulse, entityB);
+      entityB.hit(impulse, entityA);
+    }
   };
   this.world.SetContactListener(SensorContactListener);
 };
